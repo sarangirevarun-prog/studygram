@@ -12,6 +12,7 @@ import 'package:study_gram/views/materials_hub_view.dart';
 import 'package:study_gram/views/quiz_view.dart';
 import 'package:study_gram/views/profile_view.dart';
 import 'package:study_gram/views/about_us_view.dart';
+import 'package:study_gram/views/splash_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -114,8 +115,8 @@ class _AppShellState extends State<AppShell> {
   final Set<String> _bookmarkedSubjects = {"JAVA"};
 
   // ── Persistent login status fields ───────────────────────────────────────
-  bool _isLoading = true;
   bool _isLoggedIn = false;
+  bool _showSplash = true;
 
   // ── Embedded Navigator key ────────────────────────────────────────────────
   final GlobalKey<NavigatorState> _navKey = GlobalKey<NavigatorState>();
@@ -129,7 +130,18 @@ class _AppShellState extends State<AppShell> {
   @override
   void initState() {
     super.initState();
-    _loadLoginStatus();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    final loginLoad = _loadLoginStatus();
+    final splashTimer = Future.delayed(const Duration(seconds: 3));
+    await Future.wait([loginLoad, splashTimer]);
+    if (mounted) {
+      setState(() {
+        _showSplash = false;
+      });
+    }
   }
 
   Future<void> _loadLoginStatus() async {
@@ -147,7 +159,6 @@ class _AppShellState extends State<AppShell> {
         if (savedPhone != null) _phoneNumber = savedPhone;
         if (savedPoints != null) _quizPoints = savedPoints;
       }
-      _isLoading = false;
     });
   }
 
@@ -319,54 +330,53 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        backgroundColor: AppColors.bgMain,
-        body: Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        ),
-      );
-    }
-
     return ResponsiveDeviceFrame(
-      showBottomNav: _showBottomNav,
+      showBottomNav: _showSplash ? false : _showBottomNav,
       navIndex: _navIndex,
       onNavTap: _onNavTap,
-      // ── Embedded Navigator inside PopScope to handle system back button ──
-      child: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) return;
-          final navigator = _navKey.currentState;
-          if (navigator != null && navigator.canPop()) {
-            navigator.pop();
-          } else {
-            SystemNavigator.pop();
-          }
-        },
-        child: Navigator(
-          key: _navKey,
-          observers: [
-            AppShellRouteObserver(
-              onRouteChanged: (name) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!mounted) return;
-                  if (name == '/profile') {
-                    setState(() => _navIndex = 1);
-                  } else if (name == '/about') {
-                    setState(() => _navIndex = 2);
-                  } else if (name != null && name != '/login' && name != '/otp') {
-                    setState(() => _navIndex = 0);
+      // ── Animated cross-fade from splash to main navigation shell ──
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 600),
+        switchInCurve: Curves.easeInOut,
+        switchOutCurve: Curves.easeInOut,
+        child: _showSplash
+            ? const SplashView(key: ValueKey('splash_screen'))
+            : PopScope(
+                key: const ValueKey('main_navigator'),
+                canPop: false,
+                onPopInvokedWithResult: (didPop, result) {
+                  if (didPop) return;
+                  final navigator = _navKey.currentState;
+                  if (navigator != null && navigator.canPop()) {
+                    navigator.pop();
+                  } else {
+                    SystemNavigator.pop();
                   }
-                });
-              },
-            ),
-          ],
-          onGenerateRoute: (_) => _slideRoute(
-            _isLoggedIn ? _buildHome() : _buildLogin(),
-            _isLoggedIn ? '/home' : '/login',
-          ),
-        ),
+                },
+                child: Navigator(
+                  key: _navKey,
+                  observers: [
+                    AppShellRouteObserver(
+                      onRouteChanged: (name) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (!mounted) return;
+                          if (name == '/profile') {
+                            setState(() => _navIndex = 1);
+                          } else if (name == '/about') {
+                            setState(() => _navIndex = 2);
+                          } else if (name != null && name != '/login' && name != '/otp') {
+                            setState(() => _navIndex = 0);
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                  onGenerateRoute: (_) => _slideRoute(
+                    _isLoggedIn ? _buildHome() : _buildLogin(),
+                    _isLoggedIn ? '/home' : '/login',
+                  ),
+                ),
+              ),
       ),
     );
   }
