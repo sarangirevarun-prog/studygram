@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:study_gram/theme/colors.dart';
 
 
 class MaterialsView extends StatefulWidget {
   final String subject;
+  final String branch;
+  final String scheme;
+  final int semester;
   final bool isBookmarked;
   final VoidCallback onBookmarkToggle;
   final VoidCallback onBack;
@@ -12,6 +16,9 @@ class MaterialsView extends StatefulWidget {
   const MaterialsView({
     super.key,
     required this.subject,
+    required this.branch,
+    required this.scheme,
+    required this.semester,
     required this.isBookmarked,
     required this.onBookmarkToggle,
     required this.onBack,
@@ -29,13 +36,46 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _launchUrl(String urlString) async {
+    final uri = Uri.parse(urlString);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Could not open: $urlString"),
+            backgroundColor: AppColors.redDanger,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    }
+  }
+
+  String _getBranchCode(String branchName) {
+    final lower = branchName.toLowerCase();
+    if (lower.contains("computer")) return "CO";
+    if (lower.contains("information")) return "IF";
+    if (lower.contains("civil")) return "CE";
+    if (lower.contains("mechanical")) return "ME";
+    if (lower.contains("electrical")) return "EE";
+    if (lower.contains("electronics")) return "EJ";
+    if (lower.contains("chemical")) return "CH";
+    if (branchName.length >= 2) {
+      return branchName.substring(0, 2).toUpperCase();
+    }
+    return "SY";
   }
 
   void _simulateDownload(String noteTitle) {
@@ -177,27 +217,292 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
               ],
             ),
           ),
-          // Custom TabBar
-          TabBar(
-            controller: _tabController,
-            labelColor: AppColors.primaryLight,
-            unselectedLabelColor: AppColors.textSecondary,
-            indicatorColor: AppColors.primaryLight,
-            tabs: const [
-              Tab(text: "Notes"),
-              Tab(text: "Videos"),
-            ],
+          // Custom TabBar with label and indicator padding adjustments
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: AppColors.primaryLight,
+              unselectedLabelColor: AppColors.textSecondary,
+              indicatorColor: AppColors.primaryLight,
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              tabs: const [
+                Tab(text: "Syllabus"),
+                Tab(text: "Notes"),
+                Tab(text: "Videos"),
+              ],
+            ),
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
+                _buildSyllabusTab(),
                 _buildNotesTab(),
                 _buildVideosTab(),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSyllabusTab() {
+    final branchCode = _getBranchCode(widget.branch);
+    final schemeChar = widget.scheme.isNotEmpty ? widget.scheme[0].toUpperCase() : 'K';
+    final semesterDoc = "$branchCode${widget.semester}$schemeChar"; // e.g. CO5K
+
+    final subjectSyllabusTitle = "${widget.subject} Syllabus PDF (Official)";
+    final progress = _downloadProgress[subjectSyllabusTitle];
+    final downloaded = _isDownloaded[subjectSyllabusTitle] == true;
+
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        // Header Section Banner
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primaryPale.withValues(alpha: AppColors.isDark ? 0.35 : 0.8),
+                AppColors.bgCard,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.borderCard),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.menu_book_rounded, color: AppColors.primaryLight, size: 24),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "MSBTE ${widget.scheme}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      "Official curriculum search, e-content and syllabus portals",
+                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Section Title: Subject-specific Document
+        Text(
+          "Subject Syllabus",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+        ),
+        const SizedBox(height: 12),
+
+        // Subject Syllabus Document Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.bgCard,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.borderCard),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryPale,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.picture_as_pdf_outlined, color: AppColors.primaryLight, size: 20),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${widget.subject} Official Syllabus",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
+                    ),
+                    const SizedBox(height: 4),
+                    if (progress != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          backgroundColor: AppColors.bgMain,
+                          valueColor: AlwaysStoppedAnimation(AppColors.primaryLight),
+                        ),
+                      )
+                    else
+                      Text(
+                        downloaded ? "PDF Downloaded" : "PDF File Size: 1.4 MB",
+                        style: TextStyle(color: AppColors.textMuted, fontSize: 11),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              if (progress != null)
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(AppColors.primaryLight)),
+                )
+              else
+                IconButton(
+                  onPressed: () => _simulateDownload(subjectSyllabusTitle),
+                  icon: Icon(
+                    downloaded ? Icons.check_circle_rounded : Icons.download_for_offline_outlined,
+                    color: downloaded ? AppColors.primaryLight : AppColors.textSecondary,
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Section Title: Semester-wide complete Syllabus
+        Text(
+          "Semester Syllabus",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+        ),
+        const SizedBox(height: 12),
+
+        // Semester Syllabus Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.bgCard,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.borderCard),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.bluePale,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.folder_shared_outlined, color: AppColors.blueInfo, size: 20),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "$semesterDoc Syllabus PDF",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "All Subject Syllabus PDF for Sem ${widget.semester}",
+                      style: TextStyle(color: AppColors.textMuted, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () => _launchUrl("https://msbte.org.in/portal/curriculum-search/"),
+                icon: Icon(Icons.open_in_new_rounded, color: AppColors.blueInfo),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Section Title: Reference Links
+        Text(
+          "MSBTE Reference Portals",
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+        ),
+        const SizedBox(height: 12),
+
+        _buildPortalTile(
+          title: "Official MSBTE Curriculum Search",
+          subtitle: "MSBTE Curriculum Search (Official)",
+          url: "https://msbte.org.in/portal/curriculum-search/",
+          iconColor: AppColors.accent,
+          icon: Icons.search_rounded,
+        ),
+        _buildPortalTile(
+          title: "${widget.scheme} (Official MSBTE)",
+          subtitle: "MSBTE ${widget.scheme} e-Content & Syllabus",
+          url: "https://econtent.msbte.ac.in/",
+          iconColor: AppColors.primary,
+          icon: Icons.language_rounded,
+        ),
+        _buildPortalTile(
+          title: "MSBTE Curriculum Search (Official)",
+          subtitle: "Direct portal links & scheme resources",
+          url: "https://econtent.msbte.ac.in/curriculum_search/",
+          iconColor: AppColors.tealAccent,
+          icon: Icons.find_in_page_rounded,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPortalTile({
+    required String title,
+    required String subtitle,
+    required String url,
+    required Color iconColor,
+    required IconData icon,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: AppColors.bgCard,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.borderCard),
+      ),
+      child: ListTile(
+        onTap: () => _launchUrl(url),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+        ),
+        trailing: Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textMuted, size: 12),
       ),
     );
   }

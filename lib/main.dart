@@ -370,6 +370,9 @@ class _AppShellState extends State<AppShell> {
 
   Widget _buildMaterials() => MaterialsView(
     subject: _selectedSubject,
+    branch: _selectedBranch,
+    scheme: _selectedScheme,
+    semester: _selectedSemester,
     isBookmarked: _bookmarkedSubjects.contains(_selectedSubject),
     onBookmarkToggle: () {
       setState(() {
