@@ -3,27 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
 
 
-class MaterialsHubView extends StatefulWidget {
+class MaterialsView extends StatefulWidget {
   final String subject;
   final bool isBookmarked;
   final VoidCallback onBookmarkToggle;
   final VoidCallback onBack;
-  final VoidCallback onStartQuiz;
 
-  const MaterialsHubView({
+  const MaterialsView({
     super.key,
     required this.subject,
     required this.isBookmarked,
     required this.onBookmarkToggle,
     required this.onBack,
-    required this.onStartQuiz,
   });
 
   @override
-  State<MaterialsHubView> createState() => _MaterialsHubViewState();
+  State<MaterialsView> createState() => _MaterialsViewState();
 }
 
-class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerProviderStateMixin {
+class _MaterialsViewState extends State<MaterialsView> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final Map<String, double> _downloadProgress = {};
   final Map<String, bool> _isDownloaded = {};
@@ -31,7 +29,7 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -78,7 +76,7 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
       builder: (context) {
         return Dialog(
           backgroundColor: AppColors.bgMain,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+          insetPadding: EdgeInsets.symmetric(horizontal: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -94,7 +92,7 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
                     opacity: 0.4,
                   ),
                 ),
-                child: const Center(
+                child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -109,26 +107,26 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary),
                     ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      "Topic details cover variables, loops, memory architecture, stack and heap spaces.",
+                    SizedBox(height: 4),
+                    Text(
+                      "Comprehensive topic details, reference papers, and lectures covering core modules of ${widget.subject}.",
                       style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text("Close Player", style: TextStyle(color: AppColors.redDanger)),
+                          child: Text("Close Player", style: TextStyle(color: AppColors.redDanger)),
                         ),
                       ],
                     ),
@@ -149,7 +147,7 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
         children: [
           // App bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -157,22 +155,23 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
                   children: [
                     IconButton(
                       onPressed: widget.onBack,
-                      icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+                      icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
+                      constraints: BoxConstraints(),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Text(
                       widget.subject,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                     ),
                   ],
                 ),
                 IconButton(
                   onPressed: widget.onBookmarkToggle,
                   icon: Icon(
-                    widget.isBookmarked ? Icons.bookmark_added_rounded : Icons.bookmark_add_outlined,
-                    color: widget.isBookmarked ? AppColors.primaryLight : Colors.white,
+                    widget.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                    color: widget.isBookmarked ? AppColors.primaryLight : AppColors.textPrimary,
+                    size: 24,
                   ),
                 )
               ],
@@ -187,7 +186,6 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
             tabs: const [
               Tab(text: "Notes"),
               Tab(text: "Videos"),
-              Tab(text: "Quiz"),
             ],
           ),
           Expanded(
@@ -196,7 +194,6 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
               children: [
                 _buildNotesTab(),
                 _buildVideosTab(),
-                _buildQuizTab(),
               ],
             ),
           ),
@@ -207,15 +204,15 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
 
   Widget _buildNotesTab() {
     final list = [
-      "Unit 1: Fundamentals of JAVA & OOPs",
-      "Unit 2: Inheritance & Interfaces",
-      "Unit 3: Exception Handling & Multithreading",
-      "Unit 4: I/O Streams and Applets",
-      "Unit 5: Event Handling & AWT Screens",
+      "Unit 1: Fundamentals of ${widget.subject}",
+      "Unit 2: Core & Advanced ${widget.subject} Concepts",
+      "Unit 3: Theoretical Applications of ${widget.subject}",
+      "Unit 4: Specialized Case Studies in ${widget.subject}",
+      "Unit 5: Practical Lab & Reference Material",
     ];
 
     return ListView.builder(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       itemCount: list.length,
       itemBuilder: (context, index) {
         final title = list[index];
@@ -223,8 +220,8 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
         final downloaded = _isDownloaded[title] == true;
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
+          margin: EdgeInsets.only(bottom: 12),
+          padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: AppColors.bgCard,
             borderRadius: BorderRadius.circular(16),
@@ -233,43 +230,43 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppColors.primaryPale,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.picture_as_pdf_outlined, color: AppColors.primaryLight, size: 20),
+                child: Icon(Icons.picture_as_pdf_outlined, color: AppColors.primaryLight, size: 20),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     if (progress != null)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: progress,
                           backgroundColor: AppColors.bgMain,
-                          valueColor: const AlwaysStoppedAnimation(AppColors.primaryLight),
+                          valueColor: AlwaysStoppedAnimation(AppColors.primaryLight),
                         ),
                       )
                     else
                       Text(
                         downloaded ? "PDF Downloaded" : "PDF File Size: 4.8 MB",
-                        style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
+                        style: TextStyle(color: AppColors.textMuted, fontSize: 11),
                       ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               if (progress != null)
-                const SizedBox(
+                SizedBox(
                   width: 24,
                   height: 24,
                   child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(AppColors.primaryLight)),
@@ -291,20 +288,20 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
 
   Widget _buildVideosTab() {
     final list = [
-      "Introduction to Java Virtual Machine (JVM)",
-      "Understanding Classes, Objects & Methods",
-      "Garbage Collection Mechanics",
-      "Abstract Class vs Interfaces",
+      "Introduction to ${widget.subject} Basics",
+      "Deep Dive: Understanding ${widget.subject}",
+      "Practical Industrial Applications & Examples",
+      "Review: ${widget.subject} Advanced Tutorial",
     ];
 
     return ListView.builder(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       itemCount: list.length,
       itemBuilder: (context, index) {
         final title = list[index];
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 14),
+          margin: EdgeInsets.only(bottom: 14),
           decoration: BoxDecoration(
             color: AppColors.bgCard,
             borderRadius: BorderRadius.circular(16),
@@ -327,7 +324,7 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
                       opacity: 0.3,
                     ),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: CircleAvatar(
                       backgroundColor: AppColors.primaryLight,
                       child: Icon(Icons.play_arrow_rounded, color: AppColors.textPrimary),
@@ -336,16 +333,16 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(14),
+                padding: EdgeInsets.all(14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
                     ),
-                    const SizedBox(height: 4),
-                    const Row(
+                    SizedBox(height: 4),
+                    Row(
                       children: [
                         Icon(Icons.video_library_outlined, color: AppColors.textMuted, size: 12),
                         SizedBox(width: 4),
@@ -362,56 +359,6 @@ class _MaterialsHubViewState extends State<MaterialsHubView> with SingleTickerPr
     );
   }
 
-  Widget _buildQuizTab() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: AppColors.accent.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.accent.withValues(alpha: 0.2)),
-              ),
-              child: const Icon(Icons.bolt_rounded, color: AppColors.accent, size: 50),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Practice Practice Quiz",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Answer 5 conceptual JAVA multiple-choice questions under time pressure. Earn 100 points for each correct answer!",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.4),
-            ),
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: widget.onStartQuiz,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accent,
-                  foregroundColor: AppColors.bgMain,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-                child: const Text(
-                  "Start test ⚡",
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 

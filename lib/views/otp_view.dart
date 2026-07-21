@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
-import 'package:study_gram/widgets/swipe_back_wrapper.dart';
+import 'package:study_gram/widgets/swipe_back.dart';
 
 class OtpView extends StatefulWidget {
   final String phoneNumber;
@@ -22,13 +22,113 @@ class OtpView extends StatefulWidget {
 class _OtpViewState extends State<OtpView> {
   final List<TextEditingController> _controllers = List.generate(4, (_) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
-  int _secondsRemaining = 27;
+  int _secondsRemaining = 50;
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _startTimer();
+    // Trigger mock SMS notification after 800ms delay
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) {
+        _showMockSmsNotification();
+      }
+    });
+  }
+
+  void _showMockSmsNotification() {
+    final overlay = Overlay.of(context);
+    late OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) {
+        return Positioned(
+          top: 40,
+          left: 16,
+          right: 16,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E293B),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(color: const Color(0xFF334155)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.message_rounded, color: AppColors.primaryLight, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "MESSAGES",
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textMuted,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const Text(
+                              "now",
+                              style: TextStyle(fontSize: 9, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          "Studygram Verification",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          "Your OTP code is 1234. Valid for 50 seconds.",
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: Color(0xFFCBD5E1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    overlay.insert(overlayEntry);
+
+    Timer(const Duration(seconds: 4), () {
+      overlayEntry.remove();
+    });
   }
 
   @override
@@ -57,7 +157,7 @@ class _OtpViewState extends State<OtpView> {
       widget.onVerified();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text("Invalid verification code. Try entering 1234"),
           backgroundColor: AppColors.redDanger,
         ),
@@ -70,20 +170,20 @@ class _OtpViewState extends State<OtpView> {
     return SwipeBackWrapper(
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               // Back Button
               IconButton(
                 onPressed: widget.onBack,
-                icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary, size: 24),
+                icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary, size: 24),
                 padding: EdgeInsets.zero,
                 alignment: Alignment.centerLeft,
               ),
-              const SizedBox(height: 24),
-              const Text(
+              SizedBox(height: 24),
+              Text(
                 "Verify OTP",
                 style: TextStyle(
                   fontSize: 26,
@@ -91,16 +191,16 @@ class _OtpViewState extends State<OtpView> {
                   color: AppColors.textPrimary,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 "Enter the 4-digit OTP sent to\n${widget.phoneNumber}",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   height: 1.5,
                   color: AppColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 44),
+              SizedBox(height: 44),
               // OTP digit fields
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,7 +215,7 @@ class _OtpViewState extends State<OtpView> {
                       textAlign: TextAlign.center,
                       cursorColor: AppColors.primary,
                       cursorWidth: 2,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -130,7 +230,7 @@ class _OtpViewState extends State<OtpView> {
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(color: AppColors.borderCard, width: 1.5),
                         ),
-                        focusedBorder: const OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(16)),
                           borderSide: BorderSide(color: AppColors.primaryLight, width: 2.5),
                         ),
@@ -151,14 +251,14 @@ class _OtpViewState extends State<OtpView> {
                   );
                 }),
               ),
-              const SizedBox(height: 28),
+              SizedBox(height: 28),
               // Timer & Resend row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     "00:${_secondsRemaining.toString().padLeft(2, '0')}",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: AppColors.accent,
                       fontSize: 14,
@@ -168,13 +268,19 @@ class _OtpViewState extends State<OtpView> {
                     onPressed: _secondsRemaining == 0
                         ? () {
                             setState(() {
-                              _secondsRemaining = 30;
+                              _secondsRemaining = 50;
                               _startTimer();
+                            });
+                            // Trigger mock SMS notification on resend after 800ms
+                            Future.delayed(const Duration(milliseconds: 800), () {
+                              if (mounted) {
+                                _showMockSmsNotification();
+                              }
                             });
                           }
                         : null,
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     ),
                     child: Text(
                       "Resend OTP",
@@ -187,7 +293,7 @@ class _OtpViewState extends State<OtpView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 36),
+              SizedBox(height: 36),
               // Verify Button
               SizedBox(
                 width: double.infinity,
@@ -202,16 +308,16 @@ class _OtpViewState extends State<OtpView> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     "Verify & Login",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              const SizedBox(height: 48),
+              SizedBox(height: 48),
               Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: AppColors.primaryLight.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(30),
@@ -220,8 +326,8 @@ class _OtpViewState extends State<OtpView> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.verified_user_outlined, color: AppColors.primaryLight, size: 14),
-                      const SizedBox(width: 6),
+                      Icon(Icons.verified_user_outlined, color: AppColors.primaryLight, size: 14),
+                      SizedBox(width: 6),
                       Text(
                         "YOUR DATA IS 100% SECURE",
                         style: TextStyle(
@@ -235,7 +341,7 @@ class _OtpViewState extends State<OtpView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 28),
+              SizedBox(height: 28),
             ],
           ),
         ),

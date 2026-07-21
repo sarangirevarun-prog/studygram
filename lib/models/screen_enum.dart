@@ -1,1 +1,1 @@
-enum Screen { login, otp, home, chooseBranch, subjects, materials, quiz, profile, aboutUs }
+enum Screen { login, otp, home, chooseBranch, subjects, materials, profile, aboutUs }

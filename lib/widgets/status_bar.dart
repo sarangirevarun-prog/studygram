@@ -12,7 +12,7 @@ class MockStatusBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             "09:41",
             style: TextStyle(
               color: AppColors.textPrimary,
@@ -23,9 +23,9 @@ class MockStatusBar extends StatelessWidget {
           ),
           Row(
             children: [
-              const Icon(Icons.signal_cellular_alt, color: AppColors.textPrimary, size: 14),
+              Icon(Icons.signal_cellular_alt, color: AppColors.textPrimary, size: 14),
               const SizedBox(width: 6),
-              const Icon(Icons.wifi, color: AppColors.textPrimary, size: 14),
+              Icon(Icons.wifi, color: AppColors.textPrimary, size: 14),
               const SizedBox(width: 6),
               Container(
                 width: 20,
@@ -55,4 +55,3 @@ class MockStatusBar extends StatelessWidget {
     );
   }
 }
-

@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
-import 'package:study_gram/widgets/swipe_back_wrapper.dart';
+import 'package:study_gram/widgets/swipe_back.dart';
 
 class ProfileView extends StatefulWidget {
   final String userName;
   final String phoneNumber;
-  final int quizScore;
   final VoidCallback onBack;
   final Function(String) onUpdateName;
   final VoidCallback onAboutUsTap;
+  final VoidCallback onSettingsTap;
   final VoidCallback onLogout;
 
   const ProfileView({
     super.key,
     required this.userName,
     required this.phoneNumber,
-    required this.quizScore,
     required this.onBack,
     required this.onUpdateName,
     required this.onAboutUsTap,
+    required this.onSettingsTap,
     required this.onLogout,
   });
 
@@ -27,45 +27,66 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  late String _localName;
+
+  @override
+  void initState() {
+    super.initState();
+    _localName = widget.userName;
+  }
+
+  @override
+  void didUpdateWidget(covariant ProfileView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userName != widget.userName) {
+      setState(() {
+        _localName = widget.userName;
+      });
+    }
+  }
+
   void _showEditProfileDialog() {
-    final editController = TextEditingController(text: widget.userName);
+    final editController = TextEditingController(text: _localName);
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppColors.bgCard,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text("Edit Profile", style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+          title: Text("Edit Profile", style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
           content: TextField(
             controller: editController,
-            style: const TextStyle(color: AppColors.textPrimary),
+            style: TextStyle(color: AppColors.textPrimary),
             decoration: InputDecoration(
               labelText: "Display Name",
-              labelStyle: const TextStyle(color: AppColors.textSecondary),
+              labelStyle: TextStyle(color: AppColors.textSecondary),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: AppColors.borderCard),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.primaryLight, width: 2),
+                borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
               ),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel", style: TextStyle(color: AppColors.redDanger)),
+              child: Text("Cancel", style: TextStyle(color: AppColors.redDanger)),
             ),
             TextButton(
               onPressed: () {
                 final name = editController.text.trim();
                 if (name.isNotEmpty) {
+                  setState(() {
+                    _localName = name;
+                  });
                   widget.onUpdateName(name);
                   Navigator.pop(context);
                 }
               },
-              child: const Text("Save Changes", style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold)),
+              child: Text("Save Changes", style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -73,148 +94,145 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
+  String _getInitials(String name) {
+    final clean = name.trim();
+    if (clean.isEmpty) return "VS";
+    final tokens = clean.split(RegExp(r'\s+')).where((t) => t.isNotEmpty).toList();
+    if (tokens.isEmpty) return "VS";
+    if (tokens.length == 1) {
+      return tokens[0].substring(0, tokens[0].length >= 2 ? 2 : 1).toUpperCase();
+    }
+    return (tokens[0][0] + tokens[1][0]).toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SwipeBackWrapper(
-      child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              // Back button
-              IconButton(
-                onPressed: widget.onBack,
-                icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
-                padding: EdgeInsets.zero,
-                alignment: Alignment.centerLeft,
-              ),
-              const SizedBox(height: 16),
-          // Profile card
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.borderCard),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.05),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
+      child: Scaffold(
+        backgroundColor: AppColors.bgMain,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: AppColors.primaryPale,
-                      child: const Text(
-                        "VS",
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primaryLight),
+                const SizedBox(height: 12),
+                // Back button
+                IconButton(
+                  onPressed: widget.onBack,
+                  icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+                  padding: EdgeInsets.zero,
+                  alignment: Alignment.centerLeft,
+                ),
+                const SizedBox(height: 16),
+                // Profile card
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgCard,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.borderCard),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.05),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: AppColors.primaryPale,
+                            child: Text(
+                              _getInitials(_localName),
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primaryLight),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        _localName,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: _showEditProfileDialog,
+                                      child: Icon(Icons.edit_outlined, color: AppColors.primaryLight, size: 18),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  widget.phoneNumber.isNotEmpty ? widget.phoneNumber : "+91 98765 43210",
+                                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(height: 1, color: AppColors.borderCard),
+                      const SizedBox(height: 20),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  widget.userName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: _showEditProfileDialog,
-                                child: const Icon(Icons.edit_outlined, color: AppColors.primaryLight, size: 18),
-                              ),
-                            ],
-                          ),
+                          Text("MEMBER LEVEL", style: TextStyle(fontSize: 9, color: AppColors.textMuted, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
                           const SizedBox(height: 4),
-                          Text(
-                            widget.phoneNumber.isNotEmpty ? widget.phoneNumber : "+91 98765 43210",
-                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-                          ),
+                          Text("Expert Scholar", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 20),
-                const Divider(height: 1, color: Color(0xFFE2E8F0)),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("MEMBER LEVEL", style: TextStyle(fontSize: 9, color: AppColors.textMuted, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
-                        SizedBox(height: 4),
-                        Text("Expert Scholar", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.accentPale,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.bolt, color: AppColors.accent, size: 16),
-                          const SizedBox(width: 4),
-                          Text(
-                            "${widget.quizScore} pts",
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.accent, fontFamily: 'Outfit'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 28),
+                Text("Menu Options", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                const SizedBox(height: 12),
+                _buildMenuTile(
+                  icon: Icons.person_outline_rounded,
+                  title: "Edit Display Name",
+                  onTap: _showEditProfileDialog,
+                  color: AppColors.blueInfo,
                 ),
+                _buildMenuTile(
+                  icon: Icons.settings_outlined,
+                  title: "Settings",
+                  onTap: widget.onSettingsTap,
+                  color: AppColors.primary,
+                ),
+                _buildMenuTile(
+                  icon: Icons.info_outline_rounded,
+                  title: "About Us Info",
+                  onTap: widget.onAboutUsTap,
+                  color: AppColors.primaryLight,
+                ),
+                _buildMenuTile(
+                  icon: Icons.logout_rounded,
+                  title: "Sign Out",
+                  onTap: widget.onLogout,
+                  color: AppColors.redDanger,
+                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
-          const SizedBox(height: 28),
-          const Text("Menu Options", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-          const SizedBox(height: 12),
-          _buildMenuTile(
-            icon: Icons.person_outline_rounded,
-            title: "Edit Display Name",
-            onTap: _showEditProfileDialog,
-            color: AppColors.blueInfo,
-          ),
-          _buildMenuTile(
-            icon: Icons.info_outline_rounded,
-            title: "About Us Info",
-            onTap: widget.onAboutUsTap,
-            color: AppColors.primaryLight,
-          ),
-          _buildMenuTile(
-            icon: Icons.logout_rounded,
-            title: "Sign Out",
-            onTap: widget.onLogout,
-            color: AppColors.redDanger,
-          ),
-          const SizedBox(height: 24),
-        ],
+        ),
       ),
-    ), // SingleChildScrollView
-    ), // SafeArea
-    ); // SwipeBackWrapper
+    );
   }
-
 
   Widget _buildMenuTile({
     required IconData icon,
@@ -242,12 +260,10 @@ class _ProfileViewState extends State<ProfileView> {
         ),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textMuted, size: 12),
+        trailing: Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textMuted, size: 12),
       ),
     );
   }
 }
-
-

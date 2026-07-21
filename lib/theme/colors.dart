@@ -1,55 +1,38 @@
 import 'package:flutter/material.dart';
 
 /// ─── Studygram Design System ───────────────────────────────────────────────
-/// A cohesive light theme palette built around Emerald Green + Slate neutrals.
-///
-/// Backgrounds  : Soft slate-grey tints (not mint) → clean, professional
-/// Cards        : Pure white with crisp shadows
-/// Primary      : Emerald 600/500 for buttons & active states
-/// Text         : Rich charcoal → mid grey → light grey hierarchy
-/// Accents      : Amber gold for scores/badges, sky blue for info
+/// A dynamic theme palette supporting both light and dark modes.
 class AppColors {
+  static bool isDark = false;
+
   // ── Backgrounds ─────────────────────────────────────────────────────────
-  /// Main scaffold background — very light warm slate, not pure white
-  static const Color bgMain  = Color(0xFFF1F5F9);
-  /// Card / surface background — pure white for elevation contrast
-  static const Color bgCard  = Color(0xFFFFFFFF);
-  /// Subtle card border — slate-tinted, not green-tinted
-  static const Color borderCard = Color(0xFFE2E8F0);
+  static Color get bgMain => isDark ? const Color(0xFF0B111E) : const Color(0xFFF1F5F9);
+  static Color get bgCard => isDark ? const Color(0xFF172033) : const Color(0xFFFFFFFF);
+  static Color get borderCard => isDark ? const Color(0xFF28354E) : const Color(0xFFE2E8F0);
 
   // ── Brand Primary — Emerald ──────────────────────────────────────────────
-  /// Deep emerald — used for primary buttons, active nav, headings
-  static const Color primary       = Color(0xFF059669);
-  /// Mid emerald — icons, accent text, chip borders
-  static const Color primaryLight  = Color(0xFF10B981);
-  /// Very pale emerald — chip fills, card tints
-  static const Color primaryPale   = Color(0xFFD1FAE5);
-  /// Glow / shadow for emerald elements
-  static final  Color primaryGlow  = const Color(0xFF059669).withValues(alpha: 0.18);
+  static Color get primary => const Color(0xFF059669);
+  static Color get primaryLight => const Color(0xFF10B981);
+  static Color get primaryPale => isDark ? const Color(0xFF064E3B) : const Color(0xFFD1FAE5);
+  static Color get primaryGlow => const Color(0xFF059669).withValues(alpha: 0.18);
 
   // ── Brand Secondary — Amber / Gold ───────────────────────────────────────
-  /// Amber — scores, highlight badges, star ratings
-  static const Color accent     = Color(0xFFF59E0B);
-  /// Pale amber fill for badges
-  static const Color accentPale = Color(0xFFFEF3C7);
+  static Color get accent => const Color(0xFFF59E0B);
+  static Color get accentPale => isDark ? const Color(0xFF78350F) : const Color(0xFFFEF3C7);
 
   // ── Text Hierarchy ───────────────────────────────────────────────────────
-  /// Rich charcoal — headings, bold labels
-  static const Color textPrimary   = Color(0xFF0F172A);
-  /// Mid slate — body copy, descriptions
-  static const Color textSecondary = Color(0xFF475569);
-  /// Light slate — placeholders, timestamps, helper text
-  static const Color textMuted     = Color(0xFF94A3B8);
+  static Color get textPrimary => isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A);
+  static Color get textSecondary => isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569);
+  static Color get textMuted => isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8);
 
   // ── Semantic / Functional ────────────────────────────────────────────────
-  static const Color redDanger  = Color(0xFFEF4444);
-  static const Color redPale    = Color(0xFFFEE2E2);
-  static const Color blueInfo   = Color(0xFF3B82F6);
-  static const Color bluePale   = Color(0xFFDBEAFE);
-  static const Color tealAccent = Color(0xFF0D9488);
-  static const Color tealPale   = Color(0xFFCCFBF1);
+  static Color get redDanger => const Color(0xFFEF4444);
+  static Color get redPale => isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFEE2E2);
+  static Color get blueInfo => const Color(0xFF3B82F6);
+  static Color get bluePale => isDark ? const Color(0xFF1E3A8A) : const Color(0xFFDBEAFE);
+  static Color get tealAccent => const Color(0xFF0D9488);
+  static Color get tealPale => isDark ? const Color(0xFF115E59) : const Color(0xFFCCFBF1);
 
   // ── Outer device-frame canvas ────────────────────────────────────────────
-  /// Desktop outer background behind the phone frame
-  static const Color outerCanvas = Color(0xFF1E293B);
+  static Color get outerCanvas => const Color(0xFF0F172A); // Keep outer canvas dark slate
 }

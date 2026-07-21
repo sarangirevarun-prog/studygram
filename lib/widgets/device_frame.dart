@@ -73,51 +73,71 @@ class ResponsiveDeviceFrame extends StatelessWidget {
 
   Widget _buildBottomNav() {
     return Container(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
       decoration: BoxDecoration(
         color: AppColors.bgCard,
-        border: const Border(
-          top: BorderSide(color: AppColors.borderCard, width: 1),
+        border: Border(
+          top: BorderSide(
+            color: AppColors.isDark
+                ? AppColors.primaryLight.withValues(alpha: 0.15)
+                : AppColors.borderCard,
+            width: 1,
+          ),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withValues(alpha: AppColors.isDark ? 0.30 : 0.05),
             blurRadius: 16,
             offset: const Offset(0, -4),
+          ),
+          // Emerald glow — bottom-left corner
+          BoxShadow(
+            color: AppColors.primaryLight.withValues(alpha: AppColors.isDark ? 0.20 : 0.07),
+            blurRadius: AppColors.isDark ? 32 : 24,
+            offset: const Offset(-10, 4),
           ),
         ],
       ),
       child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: navIndex,
         onTap: onNavTap,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: AppColors.primaryLight,
         unselectedItemColor: AppColors.textMuted,
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11, height: 1.5),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 11, height: 1.5),
         items: const [
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(bottom: 2),
-              child: Icon(Icons.home_rounded),
+              padding: EdgeInsets.only(bottom: 3),
+              child: Icon(Icons.home_rounded, size: 22),
             ),
             label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(bottom: 2),
-              child: Icon(Icons.person_rounded),
+              padding: EdgeInsets.only(bottom: 3),
+              child: Icon(Icons.campaign_rounded, size: 22),
             ),
-            label: "Profile",
+            label: "Updates",
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(bottom: 2),
-              child: Icon(Icons.info_outline_rounded),
+              padding: EdgeInsets.only(bottom: 3),
+              child: Icon(Icons.bookmark_rounded, size: 22),
             ),
-            label: "About",
+            label: "Saved",
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.only(bottom: 3),
+              child: Icon(Icons.person_rounded, size: 22),
+            ),
+            label: "Profile",
           ),
         ],
       ),

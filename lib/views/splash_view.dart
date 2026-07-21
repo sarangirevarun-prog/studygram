@@ -73,15 +73,21 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
           // Background soft gradient
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFFFFFFFF),
-                    Color(0xFFF8FAFC), // Slate 50
-                    Color(0xFFECFDF5), // Emerald 50 tint
-                  ],
+                  colors: AppColors.isDark
+                      ? const [
+                          Color(0xFF0B111E), // Dark navy (bgMain)
+                          Color(0xFF0F1A2E), // Slightly lighter navy
+                          Color(0xFF0A1F1A), // Deep emerald tint
+                        ]
+                      : const [
+                          Color(0xFFFFFFFF),
+                          Color(0xFFF8FAFC), // Slate 50
+                          Color(0xFFECFDF5), // Emerald 50 tint
+                        ],
                 ),
               ),
             ),
@@ -100,7 +106,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                       child: Transform.scale(
                         scale: _logoScale.value,
                         child: Container(
-                          padding: const EdgeInsets.all(22),
+                          padding: EdgeInsets.all(22),
                           decoration: BoxDecoration(
                             color: AppColors.primaryPale,
                             shape: BoxShape.circle,
@@ -112,7 +118,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                               ),
                             ],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.school_rounded,
                             color: AppColors.primary,
                             size: 68,
@@ -120,11 +126,11 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
                     // Animated Brand Title
                     Opacity(
                       opacity: _textOpacity.value,
-                      child: const Column(
+                      child: Column(
                         children: [
                           Text(
                             "Studygram",
@@ -149,26 +155,11 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                         ],
                       ),
                     ),
-                  ],
-                );
-              },
-            ),
-          ),
-          // Custom progress bar loader and footer at bottom
-          Positioned(
-            bottom: 64,
-            left: 40,
-            right: 40,
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                    SizedBox(height: 24),
                     // Sleek progress bar indicator
                     Container(
                       height: 4,
-                      width: 140,
+                      width: 145,
                       decoration: BoxDecoration(
                         color: AppColors.borderCard,
                         borderRadius: BorderRadius.circular(2),
@@ -194,8 +185,8 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    const Text(
+                     SizedBox(height: 18),
+                    Text(
                       "Empowering Learning Journey",
                       style: TextStyle(
                         fontSize: 11,
