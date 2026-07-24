@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
+import 'package:study_gram/theme/l10n.dart';
 import 'package:study_gram/widgets/pull_refresh.dart';
 
 class UpdatesView extends StatelessWidget {
@@ -7,30 +8,33 @@ class UpdatesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgMain,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14),
-              child: Row(
-                children: [
-                  Icon(Icons.campaign_rounded, color: AppColors.primaryLight, size: 26),
-                  const SizedBox(width: 10),
-                  Text(
-                    "Updates & Offers",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+    return ValueListenableBuilder<String>(
+      valueListenable: AppStrings.languageNotifier,
+      builder: (context, currentLang, _) {
+        return Scaffold(
+          backgroundColor: AppColors.bgMain,
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14),
+                  child: Row(
+                    children: [
+                      Icon(Icons.campaign_rounded, color: AppColors.primaryLight, size: 26),
+                      const SizedBox(width: 10),
+                      Text(
+                        AppStrings.get('updates'),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
             Expanded(
               child: PullRefresh(
                 child: ListView(
@@ -70,7 +74,7 @@ class UpdatesView extends StatelessWidget {
                           child: const Text(
                             "SPECIAL OFFER",
                             style: TextStyle(
-                              fontSize: 9,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               letterSpacing: 0.5,
@@ -81,7 +85,7 @@ class UpdatesView extends StatelessWidget {
                         const Text(
                           "Get Premium Notes & Solved Papers",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             height: 1.2,
@@ -91,7 +95,7 @@ class UpdatesView extends StatelessWidget {
                         Text(
                           "Access full syllabus question banks and model answer solutions for MSBTE winter exams.",
                           style: TextStyle(
-                            fontSize: 11.5,
+                            fontSize: 13.5,
                             color: Colors.white.withValues(alpha: 0.9),
                             height: 1.4,
                           ),
@@ -110,7 +114,7 @@ class UpdatesView extends StatelessWidget {
                           ),
                           child: const Text(
                             "Explore Premium",
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -121,7 +125,7 @@ class UpdatesView extends StatelessWidget {
                   Text(
                     "Useful Announcements",
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
@@ -171,12 +175,17 @@ class UpdatesView extends StatelessWidget {
                               color: AppColors.bgCard,
                               border: Border.all(color: AppColors.borderCard),
                             ),
-                            child: Icon(Icons.school_rounded, color: AppColors.primaryLight, size: 22),
+                            child: ClipOval(
+                              child: Image.asset(
+                                "assets/logo/sglogo.jpeg",
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             "Studygram Education",
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textMuted),
+                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textMuted),
                           ),
                           const SizedBox(height: 24),
                         ],
@@ -190,6 +199,8 @@ class UpdatesView extends StatelessWidget {
           ],
         ),
       ),
+    );
+      },
     );
   }
 
@@ -226,7 +237,7 @@ class UpdatesView extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
@@ -238,7 +249,7 @@ class UpdatesView extends StatelessWidget {
           Text(
             description,
             style: TextStyle(
-              fontSize: 11.5,
+              fontSize: 13.5,
               color: AppColors.textSecondary,
               height: 1.4,
             ),
@@ -248,7 +259,7 @@ class UpdatesView extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Text(
               time,
-              style: TextStyle(fontSize: 9, color: AppColors.textMuted),
+              style: TextStyle(fontSize: 11, color: AppColors.textMuted),
             ),
           ),
         ],

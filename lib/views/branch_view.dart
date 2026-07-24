@@ -18,13 +18,13 @@ class BranchView extends StatelessWidget {
 
   Future<void> _openUrl(BuildContext context, String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
+    } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Could not open the website."),
+            content: const Text("Could not open the website."),
             backgroundColor: AppColors.redDanger,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -81,7 +81,7 @@ class BranchView extends StatelessWidget {
                           Text(
                             "$selectedCourse Branches",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
                             ),
@@ -89,7 +89,7 @@ class BranchView extends StatelessWidget {
                           Text(
                             "Tap a branch to explore subjects",
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 13,
                               color: AppColors.textMuted,
                             ),
                           ),
@@ -191,7 +191,7 @@ class _BranchCard extends StatelessWidget {
                 child: Text(
                   info?.degree ?? branchKey,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),

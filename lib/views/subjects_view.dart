@@ -70,12 +70,12 @@ class _SubjectsViewState extends State<SubjectsView> {
                           widget.selectedBranch,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                         ),
                         SizedBox(height: 2),
                         Text(
                           "${widget.selectedScheme} • Year ${widget.selectedYear} • Semester ${widget.selectedSemester}",
-                          style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -91,10 +91,10 @@ class _SubjectsViewState extends State<SubjectsView> {
             ),
             child: TextField(
               controller: _searchController,
-              style: TextStyle(color: AppColors.textPrimary, fontSize: 14),
+              style: TextStyle(color: AppColors.textPrimary, fontSize: 16),
               decoration: InputDecoration(
                 hintText: "Search subjects...",
-                hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 13),
+                hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 15),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.symmetric(vertical: 12),
@@ -123,7 +123,7 @@ class _SubjectsViewState extends State<SubjectsView> {
           SizedBox(height: 20),
           Text(
             "Course Modules",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
           ),
           SizedBox(height: 10),
           Expanded(
@@ -132,7 +132,7 @@ class _SubjectsViewState extends State<SubjectsView> {
                   ? Center(
                       child: Text(
                         "No matching subjects found.",
-                        style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+                        style: TextStyle(color: AppColors.textMuted, fontSize: 15),
                       ),
                     )
                   : ListView.builder(
@@ -168,7 +168,7 @@ class _SubjectsViewState extends State<SubjectsView> {
                           ),
                           title: Text(
                             subject,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                           ),
                           trailing: Icon(
                             Icons.arrow_forward_ios_rounded,

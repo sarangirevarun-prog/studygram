@@ -44,7 +44,7 @@ class SchemeView extends StatelessWidget {
                         branchName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                     ),
                   ],
@@ -70,12 +70,12 @@ class SchemeView extends StatelessWidget {
                           children: [
                             Text(
                               branchTitle,
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                             ),
                             SizedBox(height: 6),
                             Text(
                               "Select your academic syllabus scheme to access year-wise and semester-wise materials.",
-                              style: TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.4),
+                              style: TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
                             ),
                           ],
                         ),
@@ -84,7 +84,7 @@ class SchemeView extends StatelessWidget {
                       // Section Header
                       Text(
                         "Choose Syllabus Scheme",
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                       SizedBox(height: 16),
                       // Schemes List
@@ -164,12 +164,12 @@ class SchemeView extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                         ),
                         SizedBox(height: 2),
                         Text(
                           subtitle,
-                          style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -185,7 +185,7 @@ class SchemeView extends StatelessWidget {
                     child: Text(
                       "LATEST",
                       style: TextStyle(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
                         color: AppColors.tealAccent,
                         letterSpacing: 0.5,
@@ -197,7 +197,7 @@ class SchemeView extends StatelessWidget {
             SizedBox(height: 14),
             Text(
               description,
-              style: TextStyle(fontSize: 11, color: AppColors.textSecondary, height: 1.4),
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
             ),
           ],
         ),

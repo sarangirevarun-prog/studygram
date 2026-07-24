@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:study_gram/firebase_options.dart';
 import 'package:study_gram/theme/colors.dart';
+import 'package:study_gram/theme/l10n.dart';
 import 'package:study_gram/widgets/device_frame.dart';
 import 'package:study_gram/views/login_view.dart';
-import 'package:study_gram/views/otp_view.dart';
+import 'package:study_gram/views/register_view.dart';
 import 'package:study_gram/views/home_view.dart';
 import 'package:study_gram/views/branch_view.dart';
 import 'package:study_gram/views/subjects_view.dart';
@@ -21,9 +24,16 @@ import 'package:study_gram/models/branch_db.dart';
 
 final ValueNotifier<bool> themeNotifier = ValueNotifier(false);
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -33,15 +43,17 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: themeNotifier,
       builder: (_, isDarkMode, child) {
+        AppColors.isDark = isDarkMode;
         return MaterialApp(
       title: 'Studygram Education',
       debugShowCheckedModeBanner: false,
+      themeAnimationDuration: Duration.zero,
       theme: ThemeData(
-        brightness: AppColors.isDark ? Brightness.dark : Brightness.light,
+        brightness: isDarkMode ? Brightness.dark : Brightness.light,
         scaffoldBackgroundColor: AppColors.bgMain,
         fontFamily: 'Inter',
         useMaterial3: true,
-        colorScheme: AppColors.isDark
+        colorScheme: isDarkMode
             ? ColorScheme.dark(
                 primary: AppColors.primaryLight,
                 secondary: AppColors.accent,
@@ -61,8 +73,8 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppColors.bgCard,
-          hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 16),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(14)),
             borderSide: BorderSide(color: AppColors.borderCard, width: 1.5),
@@ -127,7 +139,7 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   // ── Global user state ────────────────────────────────────────────────────
-  String _userName       = "Varun Sarangire";
+  final ValueNotifier<String> _userNameNotifier = ValueNotifier<String>("Varun Sarangire");
   String _phoneNumber    = "";
   String _selectedCourse = "Diploma";
   String _selectedBranch = "Computer Engineering";
@@ -135,13 +147,15 @@ class _AppShellState extends State<AppShell> {
   int    _selectedYear = 1;
   int    _selectedSemester = 1;
   List<String> _selectedSemesterSubjects = [];
-  String _selectedSubject = "JAVA";
-  final Set<String> _bookmarkedSubjects = {"JAVA"};
+  String _selectedSubject = "Java Programming";
+  final Set<String> _bookmarkedSubjects = {"Computer Engineering|K Scheme|4|Java Programming"};
 
   // ── Persistent login status & theme fields ───────────────────────────────
   bool _isLoggedIn = false;
   bool _showSplash = true;
   bool _isDarkMode = false;
+  String _selectedLanguage = "English";
+  SharedPreferences? _prefs;
 
   // ── Embedded Navigator key ────────────────────────────────────────────────
   final GlobalKey<NavigatorState> _navKey = GlobalKey<NavigatorState>();
@@ -170,20 +184,24 @@ class _AppShellState extends State<AppShell> {
   }
 
   Future<void> _loadLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
+    _prefs = await SharedPreferences.getInstance();
+    final prefs = _prefs!;
     final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
     final savedName = prefs.getString('user_name');
     final savedPhone = prefs.getString('phone_number');
     final savedTheme = prefs.getBool('is_dark_mode') ?? false;
+    final savedLang = prefs.getString('app_language') ?? 'English';
     setState(() {
       _isLoggedIn = isLoggedIn;
       _isDarkMode = savedTheme;
+      _selectedLanguage = savedLang;
       AppColors.isDark = savedTheme;
       themeNotifier.value = savedTheme;
+      AppStrings.languageNotifier.value = savedLang;
+      if (savedName != null) _userNameNotifier.value = savedName;
       if (isLoggedIn) {
         _showBottomNav = true;
         _navIndex = 0;
-        if (savedName != null) _userName = savedName;
         if (savedPhone != null) _phoneNumber = savedPhone;
       }
     });
@@ -222,30 +240,45 @@ class _AppShellState extends State<AppShell> {
 
   // ── Bottom-nav tab handler ────────────────────────────────────────────────
   void _onNavTap(int index) {
-    if (index == _navIndex) return;
+    final navigator = _navKey.currentState;
+    if (navigator == null) return;
+
+    if (index == _navIndex) {
+      // Tapped the active tab: pop back to the root page of this tab
+      if (index == 0) {
+        navigator.popUntil((route) => route.isFirst);
+      } else {
+        String rootName = '/home';
+        if (index == 1) rootName = '/updates';
+        if (index == 2) rootName = '/saved';
+        if (index == 3) rootName = '/profile';
+        navigator.popUntil((route) => route.settings.name == rootName);
+      }
+      return;
+    }
 
     switch (index) {
       case 0:
         // Pop back to the home page (root of the navigator stack when logged in)
-        _navKey.currentState!.popUntil((route) => route.isFirst);
+        navigator.popUntil((route) => route.isFirst);
         break;
       case 1:
         if (_navIndex == 2 || _navIndex == 3) {
-          _navKey.currentState!.pushReplacement(_slideRoute(_buildUpdates(), '/updates'));
+          navigator.pushReplacement(_slideRoute(_buildUpdates(), '/updates'));
         } else {
           _push(_buildUpdates(), '/updates');
         }
         break;
       case 2:
         if (_navIndex == 1 || _navIndex == 3) {
-          _navKey.currentState!.pushReplacement(_slideRoute(_buildSaved(), '/saved'));
+          navigator.pushReplacement(_slideRoute(_buildSaved(), '/saved'));
         } else {
           _push(_buildSaved(), '/saved');
         }
         break;
       case 3:
         if (_navIndex == 1 || _navIndex == 2) {
-          _navKey.currentState!.pushReplacement(_slideRoute(_buildProfile(), '/profile'));
+          navigator.pushReplacement(_slideRoute(_buildProfile(), '/profile'));
         } else {
           _push(_buildProfile(), '/profile');
         }
@@ -255,63 +288,97 @@ class _AppShellState extends State<AppShell> {
 
   // ── Screen builders ──────────────────────────────────────────────────────
   Widget _buildLogin() => LoginView(
-    onOtpSent: (phone) {
-      setState(() => _phoneNumber = phone);
-      _push(_buildOtp(), '/otp');
-    },
-  );
+        onEmailLoggedIn: (email, name) async {
+          final prefs = _prefs ?? await SharedPreferences.getInstance();
+          _prefs = prefs;
+          await prefs.setBool('is_logged_in', true);
+          await prefs.setString('user_name', name);
+          await prefs.setString('phone_number', email);
+          _userNameNotifier.value = name;
+          setState(() {
+            _phoneNumber = email;
+            _isLoggedIn = true;
+            _showBottomNav = true;
+            _navIndex = 0;
+          });
+          _push(_buildHome(), '/home', clearStack: true);
+        },
+        onCreateAccountTap: () {
+          _push(_buildRegister(), '/register');
+        },
+      );
 
-  Widget _buildOtp() => OtpView(
-    phoneNumber: _phoneNumber,
-    onBack: () => _navKey.currentState!.pop(),
-    onVerified: () async {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('is_logged_in', true);
-      await prefs.setString('user_name', _userName);
-      await prefs.setString('phone_number', _phoneNumber);
-      setState(() {
-        _isLoggedIn = true;
-        _showBottomNav = true;
-        _navIndex = 0;
-      });
-      _push(_buildHome(), '/home', clearStack: true);
-    },
-  );
+  Widget _buildRegister() => RegisterView(
+        onEmailLoggedIn: (email, name) async {
+          final prefs = _prefs ?? await SharedPreferences.getInstance();
+          _prefs = prefs;
+          await prefs.setBool('is_logged_in', true);
+          await prefs.setString('user_name', name);
+          await prefs.setString('phone_number', email);
+          _userNameNotifier.value = name;
+          setState(() {
+            _phoneNumber = email;
+            _isLoggedIn = true;
+            _showBottomNav = true;
+            _navIndex = 0;
+          });
+          _push(_buildHome(), '/home', clearStack: true);
+        },
+        onBackToLoginTap: () {
+          _navKey.currentState!.pop();
+        },
+      );
 
-  void _openSubject(String subject, String branch) {
-    int year = 1;
-    int semester = 1;
-    String scheme = "K Scheme";
-    List<String> subjects = [];
-    final branchData = branchSemestersDb[branch];
-    if (branchData != null) {
-      branchData.forEach((sch, years) {
-        years.forEach((y, sems) {
-          sems.forEach((sem, subs) {
-            if (subs.contains(subject)) {
-              scheme = sch;
-              year = y;
-              semester = sem;
-              subjects = subs;
-            }
+  void _openSubject(
+    String subject,
+    String branch, {
+    String? scheme,
+    int? year,
+    int? semester,
+    List<String>? subjects,
+  }) {
+    int selectedYear = year ?? 1;
+    int selectedSemester = semester ?? 1;
+    String selectedScheme = scheme ?? "K Scheme";
+    List<String> selectedSubjects = subjects ?? [];
+
+    if (scheme == null || year == null || semester == null || subjects == null || subjects.isEmpty) {
+      final branchData = branchSemestersDb[branch];
+      if (branchData != null) {
+        bool found = false;
+        branchData.forEach((sch, years) {
+          if (found) return;
+          years.forEach((y, sems) {
+            if (found) return;
+            sems.forEach((sem, subs) {
+              if (found) return;
+              if (subs.contains(subject)) {
+                selectedScheme = sch;
+                selectedYear = y;
+                selectedSemester = sem;
+                selectedSubjects = subs;
+                found = true;
+              }
+            });
           });
         });
-      });
+      }
     }
+
     setState(() {
       _selectedSubject = subject;
       _selectedBranch = branch;
       _selectedCourse = "Diploma";
-      _selectedScheme = scheme;
-      _selectedYear = year;
-      _selectedSemester = semester;
-      _selectedSemesterSubjects = subjects;
+      _selectedScheme = selectedScheme;
+      _selectedYear = selectedYear;
+      _selectedSemester = selectedSemester;
+      _selectedSemesterSubjects = selectedSubjects;
     });
     _push(_buildMaterials(), '/materials');
   }
 
   Widget _buildHome() => HomeView(
-    userName: _userName,
+    userNameNotifier: _userNameNotifier,
     onCourseSelected: (course) {
       setState(() => _selectedCourse = course);
       _push(_buildChooseBranch(), '/choose_branch');
@@ -368,37 +435,42 @@ class _AppShellState extends State<AppShell> {
     },
   );
 
-  Widget _buildMaterials() => MaterialsView(
-    subject: _selectedSubject,
-    branch: _selectedBranch,
-    scheme: _selectedScheme,
-    semester: _selectedSemester,
-    isBookmarked: _bookmarkedSubjects.contains(_selectedSubject),
-    onBookmarkToggle: () {
-      setState(() {
-        if (_bookmarkedSubjects.contains(_selectedSubject)) {
-          _bookmarkedSubjects.remove(_selectedSubject);
-        } else {
-          _bookmarkedSubjects.add(_selectedSubject);
-        }
-      });
-    },
-    onBack: () => _navKey.currentState!.pop(),
-  );
+  Widget _buildMaterials() {
+    final bookmarkKey = "$_selectedBranch|$_selectedScheme|$_selectedSemester|$_selectedSubject";
+    return MaterialsView(
+      subject: _selectedSubject,
+      branch: _selectedBranch,
+      scheme: _selectedScheme,
+      semester: _selectedSemester,
+      isBookmarked: _bookmarkedSubjects.contains(bookmarkKey),
+      onBookmarkToggle: () {
+        setState(() {
+          if (_bookmarkedSubjects.contains(bookmarkKey)) {
+            _bookmarkedSubjects.remove(bookmarkKey);
+          } else {
+            _bookmarkedSubjects.add(bookmarkKey);
+          }
+        });
+      },
+      onBack: () => _navKey.currentState!.pop(),
+    );
+  }
 
   Widget _buildProfile() => ProfileView(
-    userName: _userName,
-    phoneNumber: _phoneNumber,
-    onBack: () => _navKey.currentState!.pop(),
+        userNameNotifier: _userNameNotifier,
+        email: _phoneNumber,
+        onBack: () => _navKey.currentState!.pop(),
     onUpdateName: (name) async {
-      setState(() => _userName = name);
-      final prefs = await SharedPreferences.getInstance();
+      _userNameNotifier.value = name;
+      final prefs = _prefs ?? await SharedPreferences.getInstance();
+      _prefs = prefs;
       await prefs.setString('user_name', name);
     },
     onAboutUsTap: () => _push(_buildAboutUs(), '/about'),
     onSettingsTap: () => _push(_buildSettings(), '/settings'),
     onLogout: () async {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = _prefs ?? await SharedPreferences.getInstance();
+      _prefs = prefs;
       await prefs.clear();
       setState(() {
         _isLoggedIn = false;
@@ -411,14 +483,25 @@ class _AppShellState extends State<AppShell> {
 
   Widget _buildSettings() => SettingsView(
     isDarkMode: _isDarkMode,
+    selectedLanguage: _selectedLanguage,
     onThemeChanged: (isDark) async {
       setState(() {
         _isDarkMode = isDark;
         AppColors.isDark = isDark;
       });
       themeNotifier.value = isDark;
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = _prefs ?? await SharedPreferences.getInstance();
+      _prefs = prefs;
       await prefs.setBool('is_dark_mode', isDark);
+    },
+    onLanguageChanged: (lang) async {
+      setState(() {
+        _selectedLanguage = lang;
+      });
+      AppStrings.languageNotifier.value = lang;
+      final prefs = _prefs ?? await SharedPreferences.getInstance();
+      _prefs = prefs;
+      await prefs.setString('app_language', lang);
     },
     onBack: () => _navKey.currentState!.pop(),
   );
@@ -427,16 +510,61 @@ class _AppShellState extends State<AppShell> {
 
   Widget _buildSaved() => SavedView(
         savedSubjects: _bookmarkedSubjects,
-        onSubjectSelected: (subject, branch) {
-          // Instantly open the subject materials
-          _openSubject(subject, branch);
+        onSubjectSelected: (key) {
+          final parts = key.split('|');
+          if (parts.length == 4) {
+            final branch = parts[0];
+            final scheme = parts[1];
+            final semStr = parts[2];
+            final subject = parts[3];
+
+            final sem = int.tryParse(semStr) ?? 1;
+            final year = (sem <= 2) ? 1 : ((sem <= 4) ? 2 : 3);
+
+            // Fetch the subjects list for this semester to populate _selectedSemesterSubjects
+            List<String> subjects = [];
+            final branchData = branchSemestersDb[branch];
+            if (branchData != null) {
+              final schemeData = branchData[scheme];
+              if (schemeData != null) {
+                final yearData = schemeData[year];
+                if (yearData != null) {
+                  subjects = yearData[sem] ?? [];
+                }
+              }
+            }
+
+            setState(() {
+              _selectedSubject = subject;
+              _selectedBranch = branch;
+              _selectedCourse = "Diploma";
+              _selectedScheme = scheme;
+              _selectedYear = year;
+              _selectedSemester = sem;
+              _selectedSemesterSubjects = subjects;
+            });
+            _push(_buildMaterials(), '/materials');
+          } else {
+            // Fallback for legacy key
+            final branch = _findBranchForLegacySubject(key);
+            _openSubject(key, branch);
+          }
         },
-        onRemoveBookmark: (subject) {
+        onRemoveBookmark: (key) {
           setState(() {
-            _bookmarkedSubjects.remove(subject);
+            _bookmarkedSubjects.remove(key);
           });
         },
       );
+
+  String _findBranchForLegacySubject(String subject) {
+    for (final entry in branchSubjectsDb.entries) {
+      if (entry.value.contains(subject)) {
+        return entry.key;
+      }
+    }
+    return "Computer Engineering";
+  }
 
   Widget _buildAboutUs() => AboutView(
     onBack: () => _navKey.currentState!.pop(),
@@ -444,7 +572,10 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveDeviceFrame(
+    return ValueListenableBuilder<String>(
+      valueListenable: AppStrings.languageNotifier,
+      builder: (context, currentLang, child) {
+        return ResponsiveDeviceFrame(
       showBottomNav: _showSplash ? false : _showBottomNav,
       navIndex: _navIndex,
       onNavTap: _onNavTap,
@@ -494,6 +625,8 @@ class _AppShellState extends State<AppShell> {
                 ),
               ),
       ),
+    );
+      },
     );
   }
 }

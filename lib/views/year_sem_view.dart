@@ -61,7 +61,7 @@ class _YearSemViewState extends State<YearSemView> {
                         widget.branchName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                     ),
                   ],
@@ -91,7 +91,7 @@ class _YearSemViewState extends State<YearSemView> {
                                 Expanded(
                                   child: Text(
                                     branchTitle,
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                                   ),
                                 ),
                                 Container(
@@ -103,7 +103,7 @@ class _YearSemViewState extends State<YearSemView> {
                                   child: Text(
                                     widget.scheme,
                                     style: TextStyle(
-                                      fontSize: 9,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primary,
                                       letterSpacing: 0.5,
@@ -115,7 +115,7 @@ class _YearSemViewState extends State<YearSemView> {
                             SizedBox(height: 8),
                             Text(
                               branchInfo?.description ?? "Access specialized course materials, reference documents and modules.",
-                              style: TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.4),
+                              style: TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.4),
                             ),
                           ],
                         ),
@@ -124,7 +124,7 @@ class _YearSemViewState extends State<YearSemView> {
                       // Year Selection Section
                       Text(
                         "Select Academic Year",
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                       SizedBox(height: 12),
                       Row(
@@ -140,7 +140,7 @@ class _YearSemViewState extends State<YearSemView> {
                       // Semester Selection Section
                       Text(
                         "Choose Semester",
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                       ),
                       SizedBox(height: 12),
                       Column(
@@ -198,7 +198,7 @@ class _YearSemViewState extends State<YearSemView> {
             Text(
               title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: isSelected ? AppColors.primary : AppColors.textPrimary,
               ),
@@ -241,11 +241,11 @@ class _YearSemViewState extends State<YearSemView> {
         ),
         title: Text(
           "Semester $semester",
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
         ),
         subtitle: Text(
           "$subjectCount ${subjectCount == 1 ? 'Subject' : 'Subjects'} available",
-          style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
         ),
         trailing: Icon(
           Icons.arrow_forward_ios_rounded,

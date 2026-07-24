@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
+import 'package:study_gram/theme/l10n.dart';
 
 class ResponsiveDeviceFrame extends StatelessWidget {
   final Widget child;
@@ -73,7 +74,7 @@ class ResponsiveDeviceFrame extends StatelessWidget {
 
   Widget _buildBottomNav() {
     return Container(
-      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      padding: const EdgeInsets.only(top: 2, bottom: 2),
       decoration: BoxDecoration(
         color: AppColors.bgCard,
         border: Border(
@@ -108,36 +109,36 @@ class ResponsiveDeviceFrame extends StatelessWidget {
         unselectedItemColor: AppColors.textMuted,
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11, height: 1.5),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 11, height: 1.5),
-        items: const [
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, height: 1.3),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13, height: 1.3),
+        items: [
           BottomNavigationBarItem(
-            icon: Padding(
+            icon: const Padding(
               padding: EdgeInsets.only(bottom: 3),
               child: Icon(Icons.home_rounded, size: 22),
             ),
-            label: "Home",
+            label: AppStrings.get('home'),
           ),
           BottomNavigationBarItem(
-            icon: Padding(
+            icon: const Padding(
               padding: EdgeInsets.only(bottom: 3),
               child: Icon(Icons.campaign_rounded, size: 22),
             ),
-            label: "Updates",
+            label: AppStrings.get('updates'),
           ),
           BottomNavigationBarItem(
-            icon: Padding(
+            icon: const Padding(
               padding: EdgeInsets.only(bottom: 3),
               child: Icon(Icons.bookmark_rounded, size: 22),
             ),
-            label: "Saved",
+            label: AppStrings.get('saved'),
           ),
           BottomNavigationBarItem(
-            icon: Padding(
+            icon: const Padding(
               padding: EdgeInsets.only(bottom: 3),
               child: Icon(Icons.person_rounded, size: 22),
             ),
-            label: "Profile",
+            label: AppStrings.get('profile'),
           ),
         ],
       ),

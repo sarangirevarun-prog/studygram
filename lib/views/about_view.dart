@@ -33,7 +33,7 @@ class AboutView extends StatelessWidget {
                         Text(
                           "About Us",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
@@ -84,12 +84,19 @@ class AboutView extends StatelessWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.school_rounded, color: AppColors.primary, size: 28),
+                                  ClipOval(
+                                    child: Image.asset(
+                                      "assets/logo/sglogo.jpeg",
+                                      width: 28,
+                                      height: 28,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                   const SizedBox(height: 2),
                                   Text(
                                     "Studygram",
                                     style: TextStyle(
-                                      fontSize: 9,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.textPrimary,
                                     ),
@@ -97,7 +104,7 @@ class AboutView extends StatelessWidget {
                                   Text(
                                     "EDUCATION",
                                     style: TextStyle(
-                                      fontSize: 6,
+                                      fontSize: 8,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.5,
                                       color: AppColors.primaryLight,
@@ -110,7 +117,7 @@ class AboutView extends StatelessWidget {
                             Text(
                               "Studygram Education",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
                               ),
@@ -119,7 +126,7 @@ class AboutView extends StatelessWidget {
                             Text(
                               "LEARN • PRACTICE • GROW",
                               style: TextStyle(
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textMuted,
                                 letterSpacing: 1.0,
@@ -145,7 +152,7 @@ class AboutView extends StatelessWidget {
                             Text(
                               "About Studygram",
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
                               ),
@@ -154,7 +161,7 @@ class AboutView extends StatelessWidget {
                             Text(
                               "Studygram Education is a student-focused learning platform designed to help Diploma, B.Tech, Pharmacy, and other students access video lectures, notes, manuals, previous year question papers, quizzes, and important study resources in one place. Our goal is to make quality education simple, accessible, and organized for every student.",
                               style: TextStyle(
-                                fontSize: 11.5,
+                                fontSize: 13.5,
                                 color: AppColors.textSecondary,
                                 height: 1.5,
                               ),
@@ -196,7 +203,7 @@ class AboutView extends StatelessWidget {
                                   Text(
                                     "Our Mission",
                                     style: TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primary,
                                     ),
@@ -205,7 +212,7 @@ class AboutView extends StatelessWidget {
                                   Text(
                                     "To provide every student with free, organized, and easy-to-access educational resources that improve learning and academic success.",
                                     style: TextStyle(
-                                      fontSize: 11.5,
+                                      fontSize: 13.5,
                                       color: AppColors.textSecondary,
                                       height: 1.4,
                                     ),
@@ -245,7 +252,7 @@ class AboutView extends StatelessWidget {
                             Text(
                               "Studygram Education v1.0.0",
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textMuted,
                               ),
@@ -254,7 +261,7 @@ class AboutView extends StatelessWidget {
                             Text(
                               "© 2026 Studygram Education. All Rights Reserved.",
                               style: TextStyle(
-                                fontSize: 9,
+                                fontSize: 11,
                                 color: AppColors.textMuted,
                               ),
                             ),
@@ -307,7 +314,7 @@ class AboutView extends StatelessWidget {
               Text(
                 tag,
                 style: TextStyle(
-                  fontSize: 8,
+                  fontSize: 10,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textMuted,
                   letterSpacing: 0.5,
@@ -318,7 +325,7 @@ class AboutView extends StatelessWidget {
             Text(
               name,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
@@ -330,7 +337,7 @@ class AboutView extends StatelessWidget {
           child: Text(
             role,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 13,
               color: AppColors.textSecondary,
             ),
           ),

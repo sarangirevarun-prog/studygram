@@ -28,8 +28,8 @@ const Map<String, BranchInfo> diplomaBranchInfoDb = {
         "Covers programming, data structures, operating systems, networking, "
         "databases, and software development. One of the most sought-after "
         "technical diploma branches in modern industry.",
-    website: "msbte.org.in",
-    url: "https://msbte.org.in",
+    website: "msbte.ac.in",
+    url: "https://msbte.ac.in",
     affiliation: "MSBTE / AICTE",
     duration: "3 Years",
     degree: "Diploma in Computer Engineering",
@@ -40,8 +40,8 @@ const Map<String, BranchInfo> diplomaBranchInfoDb = {
         "Focuses on construction technology, surveying, structural design, "
         "concrete technology, hydraulics, and environmental engineering. "
         "Essential for infrastructure and urban development.",
-    website: "msbte.org.in",
-    url: "https://msbte.org.in",
+    website: "msbte.ac.in",
+    url: "https://msbte.ac.in",
     affiliation: "MSBTE / AICTE",
     duration: "3 Years",
     degree: "Diploma in Civil Engineering",
@@ -52,8 +52,8 @@ const Map<String, BranchInfo> diplomaBranchInfoDb = {
         "Includes thermodynamics, fluid mechanics, manufacturing processes, "
         "CAD/CAM, and theory of machines. Trains students for production, "
         "design, and industrial maintenance roles.",
-    website: "msbte.org.in",
-    url: "https://msbte.org.in",
+    website: "msbte.ac.in",
+    url: "https://msbte.ac.in",
     affiliation: "MSBTE / AICTE",
     duration: "3 Years",
     degree: "Diploma in Mechanical Engineering",
@@ -64,8 +64,8 @@ const Map<String, BranchInfo> diplomaBranchInfoDb = {
         "Covers electrical circuits, power systems, control systems, electrical "
         "machines, and power electronics. Prepares graduates for energy sector "
         "and industrial automation roles.",
-    website: "msbte.org.in",
-    url: "https://msbte.org.in",
+    website: "msbte.ac.in",
+    url: "https://msbte.ac.in",
     affiliation: "MSBTE / AICTE",
     duration: "3 Years",
     degree: "Diploma in Electrical Engineering",
@@ -76,8 +76,8 @@ const Map<String, BranchInfo> diplomaBranchInfoDb = {
         "Studies digital electronics, microcontrollers, signals & systems, "
         "analog communication, and electromagnetics. Core branch for telecom, "
         "embedded systems, and IoT industries.",
-    website: "msbte.org.in",
-    url: "https://msbte.org.in",
+    website: "msbte.ac.in",
+    url: "https://msbte.ac.in",
     affiliation: "MSBTE / AICTE",
     duration: "3 Years",
     degree: "Diploma in Electronics & Telecommunication",

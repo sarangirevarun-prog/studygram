@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "435591976648",
+    "project_id": "studygram-c8e33",
+    "storage_bucket": "studygram-c8e33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435591976648:android:c367d65de6625acb9c37fd",
+        "android_client_info": {
+          "package_name": "com.example.study_gram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "435591976648-669jl9mieodbcidp2mnp5a6hhh66o8hp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB84ibM8FCR44fWJvv1clb3dKf6Czw2pXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "435591976648-669jl9mieodbcidp2mnp5a6hhh66o8hp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "435591976648-u8lk1oehh0490ham71fq06n4t12bhs96.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.studyGram"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

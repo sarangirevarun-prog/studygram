@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
+import 'package:study_gram/theme/l10n.dart';
 import 'package:study_gram/models/branch_db.dart';
 import 'package:study_gram/widgets/pull_refresh.dart';
 
 class SavedView extends StatelessWidget {
   final Set<String> savedSubjects;
-  final Function(String subject, String branch) onSubjectSelected;
-  final Function(String) onRemoveBookmark;
+  final Function(String key) onSubjectSelected;
+  final Function(String key) onRemoveBookmark;
 
   const SavedView({
     super.key,
@@ -28,7 +29,10 @@ class SavedView extends StatelessWidget {
   Widget build(BuildContext context) {
     final list = savedSubjects.toList();
 
-    return Scaffold(
+    return ValueListenableBuilder<String>(
+      valueListenable: AppStrings.languageNotifier,
+      builder: (context, currentLang, _) {
+        return Scaffold(
       backgroundColor: AppColors.bgMain,
       body: SafeArea(
         child: Column(
@@ -42,9 +46,9 @@ class SavedView extends StatelessWidget {
                   Icon(Icons.bookmark_rounded, color: AppColors.primaryLight, size: 26),
                   const SizedBox(width: 10),
                   Text(
-                    "Saved Subjects",
+                    AppStrings.get('savedSubjects'),
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
@@ -61,9 +65,8 @@ class SavedView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
                         itemCount: list.length,
                         itemBuilder: (context, index) {
-                          final subject = list[index];
-                          final branch = _findBranchForSubject(subject);
-                          return _buildSavedSubjectCard(context, subject, branch);
+                          final key = list[index];
+                          return _buildSavedSubjectCard(context, key);
                         },
                       ),
               ),
@@ -72,53 +75,80 @@ class SavedView extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: AppColors.primaryPale.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.bookmark_border_rounded,
-                color: AppColors.primary,
-                size: 56,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              "No saved subjects yet",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Bookmark subjects inside the course viewer to access syllabus, notes, and lectures instantly.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11.5,
-                color: AppColors.textSecondary,
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
-      ),
+      },
     );
   }
 
-  Widget _buildSavedSubjectCard(BuildContext context, String subject, String branch) {
+  Widget _buildEmptyState() {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        const SizedBox(height: 120),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryPale.withValues(alpha: 0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.bookmark_border_rounded,
+                    color: AppColors.primary,
+                    size: 56,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  AppStrings.get('noSavedSubjects'),
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Bookmark subjects inside the course viewer to access syllabus, notes, and lectures instantly.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSavedSubjectCard(BuildContext context, String key) {
+    final parts = key.split('|');
+    final String branch;
+    final String scheme;
+    final String semester;
+    final String subject;
+
+    if (parts.length == 4) {
+      branch = parts[0];
+      scheme = parts[1];
+      semester = parts[2];
+      subject = parts[3];
+    } else {
+      // Fallback for legacy simple key (e.g. "JAVA")
+      subject = key;
+      branch = _findBranchForSubject(key);
+      scheme = "K Scheme";
+      semester = "4";
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -139,15 +169,15 @@ class SavedView extends StatelessWidget {
         title: Text(
           subject,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
           ),
         ),
         subtitle: Text(
-          branch,
+          "$branch • $scheme (Sem $semester)",
           style: TextStyle(
-            fontSize: 10.5,
+            fontSize: 12.5,
             color: AppColors.textSecondary,
           ),
         ),
@@ -157,12 +187,12 @@ class SavedView extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.bookmark_remove_rounded, color: AppColors.redDanger, size: 20),
               tooltip: "Remove from Saved",
-              onPressed: () => onRemoveBookmark(subject),
+              onPressed: () => onRemoveBookmark(key),
             ),
             Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textMuted, size: 12),
           ],
         ),
-        onTap: () => onSubjectSelected(subject, branch),
+        onTap: () => onSubjectSelected(key),
       ),
     );
   }

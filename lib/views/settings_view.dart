@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
+import 'package:study_gram/theme/l10n.dart';
 import 'package:study_gram/widgets/swipe_back.dart';
 import 'package:study_gram/widgets/pull_refresh.dart';
 
 class SettingsView extends StatefulWidget {
   final bool isDarkMode;
+  final String selectedLanguage;
   final Function(bool) onThemeChanged;
+  final Function(String) onLanguageChanged;
   final VoidCallback onBack;
 
   const SettingsView({
     super.key,
     required this.isDarkMode,
+    required this.selectedLanguage,
     required this.onThemeChanged,
+    required this.onLanguageChanged,
     required this.onBack,
   });
 
@@ -22,10 +27,100 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   late bool _darkModeValue;
 
+  String _getDisplayLanguageName(String code) {
+    if (code == "Hindi") return "हिंदी (Hindi)";
+    if (code == "Marathi") return "मराठी (Marathi)";
+    return "English (Default)";
+  }
+
+  void _showLanguageDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.bgCard,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        final languages = [
+          {"code": "English", "name": "English", "sub": "Default Language", "flag": "🇬🇧"},
+          {"code": "Hindi", "name": "हिंदी (Hindi)", "sub": "हिन्दी भाषा", "flag": "🇮🇳"},
+          {"code": "Marathi", "name": "मराठी (Marathi)", "sub": "मराठी भाषा", "flag": "🇮🇳"},
+        ];
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppStrings.get('selectLanguage'),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close, color: AppColors.textMuted),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ...languages.map((lang) {
+                final isSelected = widget.selectedLanguage == lang["code"];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.primaryPale.withValues(alpha: 0.3) : AppColors.bgMain,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isSelected ? AppColors.primaryLight : AppColors.borderCard,
+                    ),
+                  ),
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.pop(context);
+                      widget.onLanguageChanged(lang["code"]!);
+                    },
+                    leading: Text(lang["flag"]!, style: const TextStyle(fontSize: 22)),
+                    title: Text(
+                      lang["name"]!,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? AppColors.primaryLight : AppColors.textPrimary,
+                      ),
+                    ),
+                    subtitle: Text(
+                      lang["sub"]!,
+                      style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                    ),
+                    trailing: isSelected
+                        ? Icon(Icons.check_circle_rounded, color: AppColors.primaryLight, size: 20)
+                        : null,
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     _darkModeValue = widget.isDarkMode;
+  }
+
+  @override
+  void didUpdateWidget(covariant SettingsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isDarkMode != widget.isDarkMode) {
+      _darkModeValue = widget.isDarkMode;
+    }
   }
 
   @override
@@ -53,7 +148,7 @@ class _SettingsViewState extends State<SettingsView> {
                       child: Text(
                         "Settings",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
@@ -87,14 +182,14 @@ class _SettingsViewState extends State<SettingsView> {
                         title: Text(
                           "Dark Mode",
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
                         ),
                         subtitle: Text(
                           "Toggle clean dark appearance",
-                          style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                         ),
                         secondary: Container(
                           padding: const EdgeInsets.all(8),
@@ -110,6 +205,40 @@ class _SettingsViewState extends State<SettingsView> {
                         ),
                         activeThumbColor: AppColors.primaryLight,
                         activeTrackColor: AppColors.primaryLight.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    // Language Section
+                    _buildSectionHeader(AppStrings.get('language')),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.bgCard,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.borderCard),
+                      ),
+                      child: ListTile(
+                        onTap: _showLanguageDialog,
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.tealPale,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(Icons.language_rounded, color: AppColors.tealAccent, size: 18),
+                        ),
+                        title: Text(
+                          AppStrings.get('selectLanguage'),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          _getDisplayLanguageName(widget.selectedLanguage),
+                          style: TextStyle(fontSize: 13, color: AppColors.primaryLight, fontWeight: FontWeight.w600),
+                        ),
+                        trailing: Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.textMuted),
                       ),
                     ),
                     const SizedBox(height: 28),
@@ -168,7 +297,7 @@ class _SettingsViewState extends State<SettingsView> {
                               Text(
                                 "Studygram App",
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.textPrimary,
                                 ),
@@ -176,14 +305,14 @@ class _SettingsViewState extends State<SettingsView> {
                               const SizedBox(height: 2),
                               Text(
                                 "Latest Release",
-                                style: TextStyle(fontSize: 10, color: AppColors.textMuted),
+                                style: TextStyle(fontSize: 12, color: AppColors.textMuted),
                               ),
                             ],
                           ),
                           Text(
                             "v1.0.0",
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
@@ -208,7 +337,7 @@ class _SettingsViewState extends State<SettingsView> {
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 13,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: AppColors.textMuted,
           letterSpacing: 0.5,
@@ -224,7 +353,7 @@ class _SettingsViewState extends State<SettingsView> {
         title: Text(
           question,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 15,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
           ),
@@ -237,7 +366,7 @@ class _SettingsViewState extends State<SettingsView> {
             child: Text(
               answer,
               style: TextStyle(
-                fontSize: 11.5,
+                fontSize: 13.5,
                 color: AppColors.textSecondary,
                 height: 1.4,
               ),

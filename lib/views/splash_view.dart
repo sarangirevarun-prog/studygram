@@ -106,9 +106,9 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                       child: Transform.scale(
                         scale: _logoScale.value,
                         child: Container(
-                          padding: EdgeInsets.all(22),
+                          width: 112,
+                          height: 112,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryPale,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -118,10 +118,11 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                               ),
                             ],
                           ),
-                          child: Icon(
-                            Icons.school_rounded,
-                            color: AppColors.primary,
-                            size: 68,
+                          child: ClipOval(
+                            child: Image.asset(
+                              "assets/logo/sglogo.jpeg",
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
@@ -136,7 +137,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                             "Studygram",
                             style: TextStyle(
                               fontFamily: 'Outfit',
-                              fontSize: 36,
+                              fontSize: 38,
                               fontWeight: FontWeight.bold,
                               letterSpacing: -0.5,
                               color: AppColors.primary,
@@ -146,7 +147,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                           Text(
                             "EDUCATION",
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 4.5,
                               color: AppColors.primaryLight,
@@ -189,7 +190,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                     Text(
                       "Empowering Learning Journey",
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: AppColors.textMuted,
                         letterSpacing: 0.5,
