@@ -168,7 +168,7 @@ class _HomeViewState extends State<HomeView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "${AppStrings.get('goodMorning')}, $userName 👋",
+                                "${AppStrings.get('hello')}, $userName ",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(

@@ -249,7 +249,7 @@ class AboutView extends StatelessWidget {
                       ),
                       _buildDevCard(
                         tag: null,
-                        name: "Sangharsh Shankarrao Sabale",
+                        name: "Sangharsh Shankarrao Rake",
                         role: "UI/UX DESIGNER/Technician/Tester",
                       ),
 

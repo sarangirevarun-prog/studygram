@@ -34,13 +34,8 @@ gradle.beforeProject {
         }
         plugins.withId("com.android.library") {
             configure<com.android.build.api.dsl.LibraryExtension> {
-                if (project.name == "url_launcher_android") {
-                    compileSdk = 36
-                    println("CONFIG_OVERRIDE: set compileSdk = 36 on library project ${project.name}")
-                } else {
-                    compileSdk = 34
-                    println("CONFIG_OVERRIDE: set compileSdk = 34 on library project ${project.name}")
-                }
+                compileSdk = 36
+                println("CONFIG_OVERRIDE: set compileSdk = 36 on library project ${project.name}")
                 compileOptions {
                     sourceCompatibility = JavaVersion.VERSION_17
                     targetCompatibility = JavaVersion.VERSION_17

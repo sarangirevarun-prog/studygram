@@ -8,6 +8,7 @@ class AppStrings {
 
   static const Map<String, Map<String, String>> _localizedValues = {
     'English': {
+      'hello': 'Hello',
       'goodMorning': 'Good Morning',
       'unlockPotential': 'Unlock your potential today',
       'searchSubjects': 'Search subjects...',
@@ -51,6 +52,7 @@ class AppStrings {
       'saved': 'Saved',
     },
     'Hindi': {
+      'hello': 'नमस्ते',
       'goodMorning': 'शुभ प्रभात',
       'unlockPotential': 'आज ही अपनी क्षमता को अनलॉक करें',
       'searchSubjects': 'विषय खोजें...',
@@ -94,6 +96,7 @@ class AppStrings {
       'saved': 'सहेजे गए',
     },
     'Marathi': {
+      'hello': 'नमस्कार',
       'goodMorning': 'शुभ प्रभात',
       'unlockPotential': 'आजच तुमची क्षमता अनलॉक करा',
       'searchSubjects': 'विषय शोधा...',
