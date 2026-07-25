@@ -508,49 +508,71 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
   }
 
   // Notes Tab UI
-  // Notes Tab UI
   Widget _buildNotesTab(List<dynamic> notesList) {
-    final List<dynamic> effectiveNotes = notesList.isNotEmpty
-        ? notesList
-        : [
-            {
-              "title": "Unit 1: Fundamentals of ${widget.subject}",
-              "size": "4.5 MB",
-              "url": "https://raw.githubusercontent.com/sarangirevarun-prog/StudyGram-database/main/pdfs/placeholder.pdf"
-            },
-            {
-              "title": "Unit 2: Core & Advanced ${widget.subject} Concepts",
-              "size": "5.2 MB",
-              "url": "https://raw.githubusercontent.com/sarangirevarun-prog/StudyGram-database/main/pdfs/placeholder.pdf"
-            },
-            {
-              "title": "Unit 3: Theoretical Applications of ${widget.subject}",
-              "size": "3.8 MB",
-              "url": "https://raw.githubusercontent.com/sarangirevarun-prog/StudyGram-database/main/pdfs/placeholder.pdf"
-            },
-            {
-              "title": "Unit 4: Specialized Case Studies in ${widget.subject}",
-              "size": "4.1 MB",
-              "url": "https://raw.githubusercontent.com/sarangirevarun-prog/StudyGram-database/main/pdfs/placeholder.pdf"
-            },
-            {
-              "title": "Unit 5: Practical Lab & Reference Material",
-              "size": "6.0 MB",
-              "url": "https://raw.githubusercontent.com/sarangirevarun-prog/StudyGram-database/main/pdfs/placeholder.pdf"
-            },
-          ];
+    if (notesList.isEmpty) {
+      return PullRefresh(
+        onRefresh: _handleRefresh,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            const SizedBox(height: 100),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(22),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryPale.withValues(alpha: 0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.library_books_outlined,
+                        color: AppColors.primary,
+                        size: 48,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "No Notes Uploaded Yet",
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Study notes and PDF resources for ${widget.subject} will appear here.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: AppColors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return PullRefresh(
       onRefresh: _handleRefresh,
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(20),
-        itemCount: effectiveNotes.length,
+        itemCount: notesList.length,
         itemBuilder: (context, index) {
-          final item = effectiveNotes[index];
+          final item = notesList[index];
           final title = item['title'] ?? 'Unit Note';
           final pdfUrl = item['url'] ?? '';
-          final size = item['size'] ?? 'PDF File Size: 4.8 MB';
+          final size = item['size'] ?? 'PDF File';
           final progress = _downloadProgress[title];
           final downloaded = _isDownloaded[title] == true;
 
@@ -627,43 +649,67 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
 
   // Videos Tab UI
   Widget _buildVideosTab(List<dynamic> videosList) {
-    final List<dynamic> effectiveVideos = videosList.isNotEmpty
-        ? videosList
-        : [
-            {
-              "title": "Introduction to ${widget.subject} Basics",
-              "duration": "18 mins video lecture",
-              "url": "https://www.youtube.com/watch?v=eIrMbAQSU34",
-              "thumbnail": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=500&auto=format&fit=crop"
-            },
-            {
-              "title": "Deep Dive: Understanding ${widget.subject}",
-              "duration": "22 mins video lecture",
-              "url": "https://www.youtube.com/watch?v=eIrMbAQSU34",
-              "thumbnail": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&auto=format&fit=crop"
-            },
-            {
-              "title": "Practical Industrial Applications & Examples",
-              "duration": "25 mins video lecture",
-              "url": "https://www.youtube.com/watch?v=eIrMbAQSU34",
-              "thumbnail": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&auto=format&fit=crop"
-            },
-            {
-              "title": "Review: ${widget.subject} Advanced Tutorial",
-              "duration": "30 mins video lecture",
-              "url": "https://www.youtube.com/watch?v=eIrMbAQSU34",
-              "thumbnail": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500&auto=format&fit=crop"
-            },
-          ];
+    if (videosList.isEmpty) {
+      return PullRefresh(
+        onRefresh: _handleRefresh,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            const SizedBox(height: 100),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(22),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryPale.withValues(alpha: 0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.video_library_outlined,
+                        color: AppColors.primary,
+                        size: 48,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "No Videos Uploaded Yet",
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Video lectures for ${widget.subject} will appear here.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: AppColors.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return PullRefresh(
       onRefresh: _handleRefresh,
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(20),
-        itemCount: effectiveVideos.length,
+        itemCount: videosList.length,
         itemBuilder: (context, index) {
-          final video = effectiveVideos[index];
+          final video = videosList[index];
           final title = video['title'] ?? 'Video Lecture';
           final duration = video['duration'] ?? '18 mins video lecture';
           final videoUrl = video['url'] ?? '';

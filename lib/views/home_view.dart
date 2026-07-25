@@ -36,11 +36,26 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   String _searchQuery = "";
+  bool _isSearchFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchFocusNode.addListener(() {
+      if (mounted) {
+        setState(() {
+          _isSearchFocused = _searchFocusNode.hasFocus;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -50,22 +65,26 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     // Filter matching subjects across all branches & schemes
     final matchingSubjects = <Map<String, dynamic>>[];
-    if (_searchQuery.isNotEmpty) {
+    final shouldShowSearchResults = _isSearchFocused || _searchQuery.isNotEmpty;
+
+    if (shouldShowSearchResults) {
       final queryLower = _searchQuery.toLowerCase();
       branchSemestersDb.forEach((branch, schemes) {
         schemes.forEach((scheme, years) {
           years.forEach((year, sems) {
             sems.forEach((semester, subjects) {
               for (final subject in subjects) {
-                if (subject.toLowerCase().contains(queryLower)) {
-                  matchingSubjects.add({
-                    'subject': subject,
-                    'branch': branch,
-                    'scheme': scheme,
-                    'year': year,
-                    'semester': semester,
-                    'subjects': subjects,
-                  });
+                if (_searchQuery.isEmpty || subject.toLowerCase().contains(queryLower)) {
+                  if (!matchingSubjects.any((element) => element['subject'] == subject && element['branch'] == branch)) {
+                    matchingSubjects.add({
+                      'subject': subject,
+                      'branch': branch,
+                      'scheme': scheme,
+                      'year': year,
+                      'semester': semester,
+                      'subjects': subjects,
+                    });
+                  }
                 }
               }
             });
@@ -167,25 +186,76 @@ class _HomeViewState extends State<HomeView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "${AppStrings.get('hello')}, $userName ",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                AppStrings.get('unlockPotential'),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: AppColors.textSecondary,
-                                ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${AppStrings.get('hello')}, $userName ",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          AppStrings.get('unlockPotential'),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppColors.textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Container(
+                                    height: 88,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: AppColors.primary.withValues(alpha: 0.2),
+                                        width: 1,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.primary.withValues(alpha: 0.1),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.asset(
+                                        "assets/images/students_banner.png",
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) => Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primaryPale,
+                                            borderRadius: BorderRadius.circular(14),
+                                          ),
+                                          child: Icon(
+                                            Icons.school_rounded,
+                                            color: AppColors.primary,
+                                            size: 36,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 16),
                               // Search bar
@@ -197,6 +267,12 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                                 child: TextField(
                                   controller: _searchController,
+                                  focusNode: _searchFocusNode,
+                                  onTap: () {
+                                    setState(() {
+                                      _isSearchFocused = true;
+                                    });
+                                  },
                                   style: TextStyle(
                                     color: AppColors.textPrimary,
                                     fontSize: 15,
@@ -221,18 +297,20 @@ class _HomeViewState extends State<HomeView> {
                                       minWidth: 36,
                                       minHeight: 18,
                                     ),
-                                    suffixIcon: _searchQuery.isNotEmpty
+                                    suffixIcon: shouldShowSearchResults
                                         ? GestureDetector(
                                             onTap: () {
                                               setState(() {
                                                 _searchController.clear();
                                                 _searchQuery = "";
+                                                _searchFocusNode.unfocus();
+                                                _isSearchFocused = false;
                                               });
                                             },
                                             child: Icon(
                                               Icons.close,
                                               color: AppColors.textSecondary,
-                                              size: 16,
+                                              size: 18,
                                             ),
                                           )
                                         : null,
@@ -326,6 +404,8 @@ class _HomeViewState extends State<HomeView> {
                                           setState(() {
                                             _searchController.clear();
                                             _searchQuery = "";
+                                            _searchFocusNode.unfocus();
+                                            _isSearchFocused = false;
                                           });
                                           widget.onSubjectSelected(
                                             subject,

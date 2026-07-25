@@ -78,50 +78,26 @@ class AboutView extends StatelessWidget {
                         child: Column(
                           children: [
                             Container(
-                              width: 90,
-                              height: 90,
+                              width: 105,
+                              height: 105,
+                              padding: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: AppColors.bgCard,
-                                border: Border.all(color: AppColors.primary, width: 2),
+                                border: Border.all(color: AppColors.primary, width: 2.5),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(alpha: 0.1),
-                                    blurRadius: 10,
+                                    color: AppColors.primary.withValues(alpha: 0.15),
+                                    blurRadius: 14,
                                     spreadRadius: 2,
                                   ),
                                 ],
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ClipOval(
-                                    child: Image.asset(
-                                      "assets/logo/sglogo.jpeg",
-                                      width: 28,
-                                      height: 28,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    "Studygram",
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  Text(
-                                    "EDUCATION",
-                                    style: TextStyle(
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.5,
-                                      color: AppColors.primaryLight,
-                                    ),
-                                  ),
-                                ],
+                              child: ClipOval(
+                                child: Image.asset(
+                                  "assets/logo/sglogo.jpeg",
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 14),
