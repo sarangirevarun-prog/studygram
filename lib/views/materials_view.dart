@@ -65,10 +65,41 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
 
   Future<Map<String, dynamic>?> _fetchSubjectData() async {
     try {
-      final response = await http.get(Uri.parse(_githubJsonUrl));
+      // Append timestamp to bust HTTP cache when user updates materials.json on GitHub
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final response = await http.get(
+        Uri.parse("$_githubJsonUrl?t=$timestamp"),
+        headers: const {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      );
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> allData = jsonDecode(response.body);
-        return allData[widget.subject] as Map<String, dynamic>?;
+
+        // 1. Direct exact lookup
+        if (allData.containsKey(widget.subject)) {
+          return allData[widget.subject] as Map<String, dynamic>?;
+        }
+
+        // 2. Case-insensitive lookup (trimmed)
+        final subjectLower = widget.subject.toLowerCase().trim();
+        for (final entry in allData.entries) {
+          if (entry.key.toLowerCase().trim() == subjectLower) {
+            return entry.value as Map<String, dynamic>?;
+          }
+        }
+
+        // 3. Normalized alphanumeric lookup (e.g. "Java Programming (22412)" vs "Java Programming")
+        final targetNorm = subjectLower.replaceAll(RegExp(r'[^a-z0-9]'), '');
+        for (final entry in allData.entries) {
+          final keyNorm = entry.key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+          if (keyNorm == targetNorm || keyNorm.contains(targetNorm) || targetNorm.contains(keyNorm)) {
+            return entry.value as Map<String, dynamic>?;
+          }
+        }
       }
     } catch (e) {
       debugPrint("Error fetching GitHub JSON: $e");

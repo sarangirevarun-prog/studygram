@@ -516,12 +516,6 @@ class _ProfileViewState extends State<ProfileView> {
                           color: AppColors.primary,
                         ),
                         _buildMenuTile(
-                          icon: Icons.info_outline_rounded,
-                          title: AppStrings.get('aboutUs'),
-                          onTap: widget.onAboutUsTap,
-                          color: AppColors.primaryLight,
-                        ),
-                        _buildMenuTile(
                           icon: Icons.rate_review_outlined,
                           title: AppStrings.get('appSuggestions'),
                           onTap: widget.onSuggestionTap,
@@ -532,6 +526,12 @@ class _ProfileViewState extends State<ProfileView> {
                           title: AppStrings.get('moreEducationApps'),
                           onTap: widget.onMoreAppsTap,
                           color: AppColors.accent,
+                        ),
+                        _buildMenuTile(
+                          icon: Icons.info_outline_rounded,
+                          title: AppStrings.get('aboutUs'),
+                          onTap: widget.onAboutUsTap,
+                          color: AppColors.primaryLight,
                         ),
                         _buildMenuTile(
                           icon: Icons.logout_rounded,

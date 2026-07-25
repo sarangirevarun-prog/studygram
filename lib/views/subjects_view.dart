@@ -129,14 +129,20 @@ class _SubjectsViewState extends State<SubjectsView> {
           Expanded(
             child: PullRefresh(
               child: filteredSubjects.isEmpty
-                  ? Center(
-                      child: Text(
-                        "No matching subjects found.",
-                        style: TextStyle(color: AppColors.textMuted, fontSize: 15),
-                      ),
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                      children: [
+                        const SizedBox(height: 120),
+                        Center(
+                          child: Text(
+                            "No matching subjects found.",
+                            style: TextStyle(color: AppColors.textMuted, fontSize: 15),
+                          ),
+                        ),
+                      ],
                     )
                   : ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
+                      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                       itemCount: filteredSubjects.length,
                     itemBuilder: (context, index) {
                       final subject = filteredSubjects[index];

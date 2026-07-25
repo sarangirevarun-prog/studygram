@@ -58,7 +58,7 @@ class AboutView extends StatelessWidget {
                             return UserAvatar(
                               avatarPathOrUrl: avatarVal,
                               userName: userName,
-                              radius: 16,
+                              radius: 20,
                             );
                           },
                         );
@@ -217,6 +217,7 @@ class AboutView extends StatelessWidget {
                         tag: "DEVELOPED BY",
                         name: "Varun Sham Sarangire",
                         role: "Flutter Developer/UI/UX DESIGNER/Analyzer/Tester/Backend Designer",
+                        contactInfo: "WhatsApp: @varun_vs24 • Insta: @varun_vs205",
                       ),
                       _buildDevCard(
                         tag: null,
@@ -271,6 +272,7 @@ class AboutView extends StatelessWidget {
     required String? tag,
     required String name,
     required String role,
+    String? contactInfo,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -321,12 +323,28 @@ class AboutView extends StatelessWidget {
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 2.0),
-          child: Text(
-            role,
-            style: TextStyle(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                role,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              if (contactInfo != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  contactInfo,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryLight,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ),

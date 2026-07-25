@@ -3,6 +3,7 @@ import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
 import 'package:study_gram/widgets/swipe_back.dart';
 import 'package:study_gram/widgets/pull_refresh.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsView extends StatefulWidget {
   final bool isDarkMode;
@@ -26,6 +27,13 @@ class SettingsView extends StatefulWidget {
 
 class _SettingsViewState extends State<SettingsView> {
   late bool _darkModeValue;
+
+  Future<void> _launchContactUrl(String urlStr) async {
+    final uri = Uri.parse(urlStr);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {}
+  }
 
   String _getDisplayLanguageName(String code) {
     if (code == "Hindi") return "हिंदी (Hindi)";
@@ -271,7 +279,75 @@ class _SettingsViewState extends State<SettingsView> {
                           _buildDivider(),
                           _buildFAQTile(
                             question: "Contact Support",
-                            answer: "For queries, support, or feedback, you can contact us at support@studygram.org.in.",
+                            answerWidget: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "For queries, support, or feedback, feel free to reach out directly via WhatsApp, Instagram, or Email:",
+                                  style: TextStyle(
+                                    fontSize: 13.5,
+                                    color: AppColors.textSecondary,
+                                    height: 1.4,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                InkWell(
+                                  onTap: () => _launchContactUrl("https://wa.me/91varun_vs24"),
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(7),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF25D366).withValues(alpha: 0.15),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(Icons.chat_bubble_rounded, color: Color(0xFF25D366), size: 16),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text("WhatsApp Support", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+                                            Text("@varun_vs24", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primaryLight)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                InkWell(
+                                  onTap: () => _launchContactUrl("https://instagram.com/varun_vs205"),
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(7),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE1306C).withValues(alpha: 0.15),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(Icons.camera_alt_rounded, color: Color(0xFFE1306C), size: 16),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text("Instagram Direct", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+                                            Text("@varun_vs205", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primaryLight)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -346,7 +422,11 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
-  Widget _buildFAQTile({required String question, required String answer}) {
+  Widget _buildFAQTile({
+    required String question,
+    String? answer,
+    Widget? answerWidget,
+  }) {
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
@@ -363,14 +443,15 @@ class _SettingsViewState extends State<SettingsView> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Text(
-              answer,
-              style: TextStyle(
-                fontSize: 13.5,
-                color: AppColors.textSecondary,
-                height: 1.4,
-              ),
-            ),
+            child: answerWidget ??
+                Text(
+                  answer ?? "",
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
           ),
         ],
       ),

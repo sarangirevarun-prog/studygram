@@ -104,12 +104,12 @@ class _HomeViewState extends State<HomeView> {
               child: SafeArea(
                 child: PullRefresh(
                   child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         // ── Header Row ──
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,24 +117,27 @@ class _HomeViewState extends State<HomeView> {
                             Row(
                               children: [
                                 Container(
+                                  width: 40,
+                                  height: 40,
+                                  padding: const EdgeInsets.all(2),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
+                                    color: AppColors.bgCard,
                                     border: Border.all(
-                                      color: Colors.white,
-                                      width: 1.5,
+                                      color: AppColors.primaryLight.withValues(alpha: 0.4),
+                                      width: 2,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.12),
-                                        blurRadius: 4,
+                                        color: AppColors.primary.withValues(alpha: 0.12),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
                                   child: ClipOval(
                                     child: Image.asset(
                                       "assets/logo/sglogo.jpeg",
-                                      width: 32,
-                                      height: 32,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -164,11 +167,11 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 12),
                         // ── Greeting Card with active search ──
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
@@ -180,7 +183,7 @@ class _HomeViewState extends State<HomeView> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: AppColors.borderCard),
                           ),
                           child: Column(
@@ -198,31 +201,31 @@ class _HomeViewState extends State<HomeView> {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.textPrimary,
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
+                                        const SizedBox(height: 2),
                                         Text(
                                           AppStrings.get('unlockPotential'),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             color: AppColors.textSecondary,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  const SizedBox(width: 10),
                                   Container(
-                                    height: 88,
-                                    width: 120,
+                                    height: 70,
+                                    width: 95,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: BorderRadius.circular(14),
                                       border: Border.all(
                                         color: AppColors.primary.withValues(alpha: 0.2),
                                         width: 1,
@@ -230,26 +233,26 @@ class _HomeViewState extends State<HomeView> {
                                       boxShadow: [
                                         BoxShadow(
                                           color: AppColors.primary.withValues(alpha: 0.1),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 4),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 3),
                                         ),
                                       ],
                                     ),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
+                                      borderRadius: BorderRadius.circular(13),
                                       child: Image.asset(
                                         "assets/images/students_banner.png",
                                         fit: BoxFit.contain,
                                         errorBuilder: (context, error, stackTrace) => Container(
-                                          padding: const EdgeInsets.all(10),
+                                          padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             color: AppColors.primaryPale,
-                                            borderRadius: BorderRadius.circular(14),
+                                            borderRadius: BorderRadius.circular(12),
                                           ),
                                           child: Icon(
                                             Icons.school_rounded,
                                             color: AppColors.primary,
-                                            size: 36,
+                                            size: 30,
                                           ),
                                         ),
                                       ),
@@ -257,7 +260,7 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 12),
                               // Search bar
                               Container(
                                 decoration: BoxDecoration(
@@ -520,15 +523,15 @@ class _HomeViewState extends State<HomeView> {
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 24),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
+                            horizontal: 25,
+                            vertical: 20,
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.bgCard,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(14),
                             border: Border.all(color: AppColors.borderCard),
                             boxShadow: [
                               BoxShadow(
@@ -541,18 +544,18 @@ class _HomeViewState extends State<HomeView> {
                           child: Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(7),
                                 decoration: BoxDecoration(
                                   color: AppColors.primaryPale,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
                                   Icons.notifications_active_outlined,
                                   color: AppColors.primaryLight,
-                                  size: 20,
+                                  size: 18,
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: 10),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -562,7 +565,7 @@ class _HomeViewState extends State<HomeView> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 14.5,
+                                        fontSize: 13.5,
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.textPrimary,
                                       ),
@@ -573,14 +576,14 @@ class _HomeViewState extends State<HomeView> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 12.5,
+                                        fontSize: 12,
                                         color: AppColors.textSecondary,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 8),
                               InkWell(
                                 onTap: () {
                                   Navigator.push(
@@ -593,8 +596,8 @@ class _HomeViewState extends State<HomeView> {
                                 borderRadius: BorderRadius.circular(16),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
+                                    horizontal: 10,
+                                    vertical: 5,
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColors.primary.withValues(
@@ -605,7 +608,7 @@ class _HomeViewState extends State<HomeView> {
                                   child: Text(
                                     "View",
                                     style: TextStyle(
-                                      fontSize: 12.5,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primary,
                                     ),
@@ -615,7 +618,7 @@ class _HomeViewState extends State<HomeView> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 12),
                         // ── Course Grid ──
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -623,7 +626,7 @@ class _HomeViewState extends State<HomeView> {
                             Text(
                               AppStrings.get('chooseCourse'),
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
                               ),
@@ -632,14 +635,14 @@ class _HomeViewState extends State<HomeView> {
                               onPressed: _showAllCoursesSheet,
                               style: TextButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
+                                  horizontal: 6,
+                                  vertical: 2,
                                 ),
                               ),
                               child: Text(
                                 AppStrings.get('seeAll'),
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   color: AppColors.primaryLight,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -647,7 +650,7 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 8),
                         Row(
                           children: [
                             Expanded(
@@ -660,7 +663,7 @@ class _HomeViewState extends State<HomeView> {
                                 color: AppColors.tealAccent,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 10),
                             Expanded(
                               child: _buildCourseCard(
                                 context,
@@ -673,7 +676,7 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Row(
                           children: [
                             Expanded(
@@ -687,7 +690,7 @@ class _HomeViewState extends State<HomeView> {
                                 isComingSoon: true,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 10),
                             Expanded(
                               child: _buildCourseCard(
                                 context,
@@ -701,7 +704,7 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 28),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),
@@ -1016,16 +1019,16 @@ class _HomeViewState extends State<HomeView> {
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.borderCard),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+              color: AppColors.primary.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -1037,16 +1040,16 @@ class _HomeViewState extends State<HomeView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(9),
                   ),
-                  child: Icon(icon, color: color, size: 24),
+                  child: Icon(icon, color: color, size: 18),
                 ),
                 if (isComingSoon)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
                       color: AppColors.accentPale,
                       borderRadius: BorderRadius.circular(8),
@@ -1055,7 +1058,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Text(
                       "Soon",
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 10.5,
                         fontWeight: FontWeight.bold,
                         color: AppColors.accent,
                       ),
@@ -1064,28 +1067,28 @@ class _HomeViewState extends State<HomeView> {
                 else
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    size: 13,
+                    size: 11,
                     color: AppColors.textMuted,
                   ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 6),
             Text(
               displayTitle,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 15.5,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Outfit',
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               isComingSoon ? "Content Empty • Coming Soon" : description,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 11.5,
                 color: isComingSoon ? AppColors.textMuted : AppColors.textSecondary,
               ),
             ),

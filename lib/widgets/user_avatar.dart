@@ -198,8 +198,10 @@ class UserAvatar extends StatelessWidget {
     Widget avatarWidget = Container(
       width: size,
       height: size,
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
+        color: AppColors.bgCard,
         border: Border.all(
           color: AppColors.primaryLight.withValues(alpha: 0.4),
           width: 2,
