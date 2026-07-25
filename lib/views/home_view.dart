@@ -217,24 +217,24 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                  Container(
-                                    height: 88,
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: AppColors.primary.withValues(alpha: 0.2),
-                                        width: 1,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: AppColors.primary.withValues(alpha: 0.1),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 4),
+                                    Container(
+                                      height: 88,
+                                      width: 120,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.isDark ? AppColors.bgCard : Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: AppColors.primary.withValues(alpha: AppColors.isDark ? 0.35 : 0.2),
+                                          width: 1,
                                         ),
-                                      ],
-                                    ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.primary.withValues(alpha: AppColors.isDark ? 0.2 : 0.08),
+                                            blurRadius: 12,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15),
                                       child: Image.asset(
@@ -442,6 +442,52 @@ class _HomeViewState extends State<HomeView> {
                               ],
                             ],
                           ),
+                        ),
+                        const SizedBox(height: 16),
+                        // ── Quick Access Action Pills ──
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildQuickActionChip(
+                                icon: Icons.bookmark_outline_rounded,
+                                label: "Diploma",
+                                color: AppColors.tealAccent,
+                                onTap: () => widget.onCourseSelected("Diploma"),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildQuickActionChip(
+                                icon: Icons.emoji_events_outlined,
+                                label: "Degree",
+                                color: AppColors.accent,
+                                onTap: () => widget.onCourseSelected("Degree"),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildQuickActionChip(
+                                icon: Icons.auto_awesome_rounded,
+                                label: "Courses",
+                                color: AppColors.primaryLight,
+                                onTap: _showAllCoursesSheet,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildQuickActionChip(
+                                icon: Icons.campaign_rounded,
+                                label: "Updates",
+                                color: AppColors.blueInfo,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const UpdatesView()),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 20),
                         // ── Promotional Banner Ad ──
@@ -1089,6 +1135,56 @@ class _HomeViewState extends State<HomeView> {
               style: TextStyle(
                 fontSize: 12.5,
                 color: isComingSoon ? AppColors.textMuted : AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.borderCard),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: AppColors.isDark ? 0.08 : 0.03),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 18),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
               ),
             ),
           ],
