@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:study_gram/firebase_options.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
@@ -20,6 +22,8 @@ import 'package:study_gram/views/year_sem_view.dart';
 import 'package:study_gram/views/settings_view.dart';
 import 'package:study_gram/views/updates_view.dart';
 import 'package:study_gram/views/saved_view.dart';
+import 'package:study_gram/views/feedback_view.dart';
+import 'package:study_gram/views/more_apps_view.dart';
 import 'package:study_gram/models/branch_db.dart';
 
 final ValueNotifier<bool> themeNotifier = ValueNotifier(false);
@@ -140,6 +144,7 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   // ── Global user state ────────────────────────────────────────────────────
   final ValueNotifier<String> _userNameNotifier = ValueNotifier<String>("Varun Sarangire");
+  final ValueNotifier<String?> _userAvatarNotifier = ValueNotifier<String?>(null);
   String _phoneNumber    = "";
   String _selectedCourse = "Diploma";
   String _selectedBranch = "Computer Engineering";
@@ -148,7 +153,7 @@ class _AppShellState extends State<AppShell> {
   int    _selectedSemester = 1;
   List<String> _selectedSemesterSubjects = [];
   String _selectedSubject = "Java Programming";
-  final Set<String> _bookmarkedSubjects = {"Computer Engineering|K Scheme|4|Java Programming"};
+  Set<String> _bookmarkedSubjects = {};
 
   // ── Persistent login status & theme fields ───────────────────────────────
   bool _isLoggedIn = false;
@@ -205,9 +210,138 @@ class _AppShellState extends State<AppShell> {
         if (savedPhone != null) _phoneNumber = savedPhone;
       }
     });
+    if (isLoggedIn) {
+      final userKey = _getUserStorageKey();
+      final savedAvatar = prefs.getString('user_avatar_$userKey') ?? prefs.getString('user_avatar');
+      _userAvatarNotifier.value = savedAvatar;
+      await _loadUserBookmarks();
+      await _loadUserAvatarCloud();
+    } else {
+      await _loadUserBookmarks();
+    }
   }
 
-  // ── Helper: slide push ───────────────────────────────────────────────────
+  String _getUserStorageKey() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null && uid.isNotEmpty) {
+      return uid;
+    }
+    if (_phoneNumber.isNotEmpty) {
+      return _phoneNumber.replaceAll(RegExp(r'[^a-zA-Z0-9_\-]'), '_');
+    }
+    return 'default_user';
+  }
+
+  Future<void> _loadUserBookmarks() async {
+    final userKey = _getUserStorageKey();
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+    _prefs = prefs;
+
+    // Load locally saved bookmarks per user
+    final savedList = prefs.getStringList('saved_subjects_$userKey') ?? prefs.getStringList('saved_subjects') ?? [];
+    Set<String> loaded = savedList.toSet();
+
+    if (mounted) {
+      setState(() {
+        _bookmarkedSubjects = loaded;
+      });
+    }
+
+    // Sync with Firestore if authenticated user
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (doc.exists && doc.data() != null) {
+          final data = doc.data()!;
+          if (data.containsKey('saved_subjects') && data['saved_subjects'] is List) {
+            final firestoreList = List<String>.from(data['saved_subjects']);
+            final firestoreSet = firestoreList.toSet();
+            await prefs.setStringList('saved_subjects_$userKey', firestoreSet.toList());
+            if (mounted) {
+              setState(() {
+                _bookmarkedSubjects = firestoreSet;
+              });
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint("Error loading user bookmarks from Firestore: $e");
+      }
+    }
+  }
+
+  Future<void> _saveUserBookmarks() async {
+    final userKey = _getUserStorageKey();
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+    _prefs = prefs;
+    final list = _bookmarkedSubjects.toList();
+    await prefs.setStringList('saved_subjects_$userKey', list);
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'saved_subjects': list,
+        }, SetOptions(merge: true));
+      } catch (e) {
+        debugPrint("Error saving user bookmarks to Firestore: $e");
+      }
+    }
+  }
+
+  Future<void> _loadUserAvatarCloud() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (doc.exists && doc.data() != null) {
+          final data = doc.data()!;
+          if (data.containsKey('avatar_url') && data['avatar_url'] is String) {
+            final cloudAvatar = data['avatar_url'] as String;
+            _userAvatarNotifier.value = cloudAvatar;
+            final prefs = _prefs ?? await SharedPreferences.getInstance();
+            await prefs.setString('user_avatar_${user.uid}', cloudAvatar);
+          }
+        }
+      } catch (e) {
+        debugPrint("Error loading user avatar from Firestore: $e");
+      }
+    }
+  }
+
+  Future<void> _updateUserAvatar(String? avatar) async {
+    _userAvatarNotifier.value = avatar;
+    final userKey = _getUserStorageKey();
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
+    _prefs = prefs;
+
+    if (avatar != null && avatar.isNotEmpty) {
+      await prefs.setString('user_avatar_$userKey', avatar);
+    } else {
+      await prefs.remove('user_avatar_$userKey');
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'avatar_url': avatar,
+        }, SetOptions(merge: true));
+      } catch (e) {
+        debugPrint("Error updating user avatar in Firestore: $e");
+      }
+    }
+  }
+
+  // ── Helper: slide push & safe pop ──────────────────────────────────────────
+  void _safePop() {
+    final nav = _navKey.currentState;
+    if (nav != null && nav.canPop()) {
+      nav.pop();
+    }
+  }
+
   void _push(Widget page, String name, {bool clearStack = false}) {
     if (clearStack) {
       _navKey.currentState!.pushAndRemoveUntil(
@@ -301,6 +435,7 @@ class _AppShellState extends State<AppShell> {
             _showBottomNav = true;
             _navIndex = 0;
           });
+          await _loadUserBookmarks();
           _push(_buildHome(), '/home', clearStack: true);
         },
         onCreateAccountTap: () {
@@ -322,11 +457,10 @@ class _AppShellState extends State<AppShell> {
             _showBottomNav = true;
             _navIndex = 0;
           });
+          await _loadUserBookmarks();
           _push(_buildHome(), '/home', clearStack: true);
         },
-        onBackToLoginTap: () {
-          _navKey.currentState!.pop();
-        },
+        onBackToLoginTap: _safePop,
       );
 
   void _openSubject(
@@ -379,6 +513,7 @@ class _AppShellState extends State<AppShell> {
 
   Widget _buildHome() => HomeView(
     userNameNotifier: _userNameNotifier,
+    userAvatarNotifier: _userAvatarNotifier,
     onCourseSelected: (course) {
       setState(() => _selectedCourse = course);
       _push(_buildChooseBranch(), '/choose_branch');
@@ -392,7 +527,7 @@ class _AppShellState extends State<AppShell> {
 
   Widget _buildChooseBranch() => BranchView(
     selectedCourse: _selectedCourse,
-    onBack: () => _navKey.currentState!.pop(),
+    onBack: _safePop,
     onBranchSelected: (branch) {
       setState(() => _selectedBranch = branch);
       _push(_buildSchemeSelection(), '/scheme_select');
@@ -401,7 +536,7 @@ class _AppShellState extends State<AppShell> {
 
   Widget _buildSchemeSelection() => SchemeView(
     branchName: _selectedBranch,
-    onBack: () => _navKey.currentState!.pop(),
+    onBack: _safePop,
     onSchemeSelected: (scheme) {
       setState(() => _selectedScheme = scheme);
       _push(_buildYearSemSelection(), '/year_sem_select');
@@ -411,7 +546,7 @@ class _AppShellState extends State<AppShell> {
   Widget _buildYearSemSelection() => YearSemView(
     branchName: _selectedBranch,
     scheme: _selectedScheme,
-    onBack: () => _navKey.currentState!.pop(),
+    onBack: _safePop,
     onSemesterSelected: (year, semester, subjects) {
       setState(() {
         _selectedYear = year;
@@ -428,7 +563,7 @@ class _AppShellState extends State<AppShell> {
     selectedYear: _selectedYear,
     selectedSemester: _selectedSemester,
     subjects: _selectedSemesterSubjects,
-    onBack: () => _navKey.currentState!.pop(),
+    onBack: _safePop,
     onSubjectSelected: (subject) {
       setState(() => _selectedSubject = subject);
       _push(_buildMaterials(), '/materials');
@@ -443,7 +578,7 @@ class _AppShellState extends State<AppShell> {
       scheme: _selectedScheme,
       semester: _selectedSemester,
       isBookmarked: _bookmarkedSubjects.contains(bookmarkKey),
-      onBookmarkToggle: () {
+      onBookmarkToggle: () async {
         setState(() {
           if (_bookmarkedSubjects.contains(bookmarkKey)) {
             _bookmarkedSubjects.remove(bookmarkKey);
@@ -451,24 +586,32 @@ class _AppShellState extends State<AppShell> {
             _bookmarkedSubjects.add(bookmarkKey);
           }
         });
+        await _saveUserBookmarks();
       },
-      onBack: () => _navKey.currentState!.pop(),
+      onBack: _safePop,
     );
   }
 
   Widget _buildProfile() => ProfileView(
         userNameNotifier: _userNameNotifier,
+        userAvatarNotifier: _userAvatarNotifier,
         email: _phoneNumber,
-        onBack: () => _navKey.currentState!.pop(),
+        onBack: _safePop,
     onUpdateName: (name) async {
       _userNameNotifier.value = name;
       final prefs = _prefs ?? await SharedPreferences.getInstance();
       _prefs = prefs;
       await prefs.setString('user_name', name);
     },
+    onUpdateAvatar: _updateUserAvatar,
     onAboutUsTap: () => _push(_buildAboutUs(), '/about'),
+    onSuggestionTap: () => _push(_buildSuggestion(), '/suggestion'),
+    onMoreAppsTap: () => _push(_buildMoreApps(), '/more_apps'),
     onSettingsTap: () => _push(_buildSettings(), '/settings'),
     onLogout: () async {
+      try {
+        await FirebaseAuth.instance.signOut();
+      } catch (_) {}
       final prefs = _prefs ?? await SharedPreferences.getInstance();
       _prefs = prefs;
       await prefs.clear();
@@ -476,6 +619,8 @@ class _AppShellState extends State<AppShell> {
         _isLoggedIn = false;
         _showBottomNav = false;
         _navIndex = 0;
+        _bookmarkedSubjects = {};
+        _userAvatarNotifier.value = null;
       });
       _push(_buildLogin(), '/login', clearStack: true);
     },
@@ -503,7 +648,7 @@ class _AppShellState extends State<AppShell> {
       _prefs = prefs;
       await prefs.setString('app_language', lang);
     },
-    onBack: () => _navKey.currentState!.pop(),
+    onBack: _safePop,
   );
 
   Widget _buildUpdates() => const UpdatesView();
@@ -550,10 +695,11 @@ class _AppShellState extends State<AppShell> {
             _openSubject(key, branch);
           }
         },
-        onRemoveBookmark: (key) {
+        onRemoveBookmark: (key) async {
           setState(() {
             _bookmarkedSubjects.remove(key);
           });
+          await _saveUserBookmarks();
         },
       );
 
@@ -567,8 +713,20 @@ class _AppShellState extends State<AppShell> {
   }
 
   Widget _buildAboutUs() => AboutView(
-    onBack: () => _navKey.currentState!.pop(),
-  );
+        userNameNotifier: _userNameNotifier,
+        userAvatarNotifier: _userAvatarNotifier,
+        onBack: _safePop,
+      );
+
+  Widget _buildSuggestion() => FeedbackView(
+        userEmail: _phoneNumber,
+        userName: _userNameNotifier.value,
+        onBack: _safePop,
+      );
+
+  Widget _buildMoreApps() => MoreAppsView(
+        onBack: _safePop,
+      );
 
   @override
   Widget build(BuildContext context) {

@@ -270,7 +270,23 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
                             ],
                           ),
                           IconButton(
-                            onPressed: widget.onBookmarkToggle,
+                            onPressed: () {
+                              widget.onBookmarkToggle();
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    !widget.isBookmarked
+                                        ? "${widget.subject} saved to your Saved list!"
+                                        : "${widget.subject} removed from Saved list",
+                                  ),
+                                  backgroundColor: !widget.isBookmarked ? AppColors.primary : AppColors.textSecondary,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            },
                             icon: Icon(
                               widget.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
                               color: widget.isBookmarked ? AppColors.primaryLight : AppColors.textPrimary,

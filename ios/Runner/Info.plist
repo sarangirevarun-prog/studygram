@@ -71,5 +71,9 @@
 		<string>https</string>
 		<string>http</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Studygram requires camera access to let students take and upload profile pictures.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Studygram requires photo library access to let students pick and upload profile pictures.</string>
 </dict>
 </plist>

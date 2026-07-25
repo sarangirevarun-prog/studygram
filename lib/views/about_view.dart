@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/widgets/swipe_back.dart';
+import 'package:study_gram/widgets/user_avatar.dart';
 
 class AboutView extends StatelessWidget {
+  final ValueNotifier<String> userNameNotifier;
+  final ValueNotifier<String?> userAvatarNotifier;
   final VoidCallback onBack;
-  const AboutView({super.key, required this.onBack});
+
+  const AboutView({
+    super.key,
+    required this.userNameNotifier,
+    required this.userAvatarNotifier,
+    required this.onBack,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +49,20 @@ class AboutView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.borderCard,
-                      ),
-                      child: Icon(
-                        Icons.person_rounded,
-                        color: AppColors.textPrimary,
-                        size: 20,
-                      ),
+                    ValueListenableBuilder<String>(
+                      valueListenable: userNameNotifier,
+                      builder: (context, userName, _) {
+                        return ValueListenableBuilder<String?>(
+                          valueListenable: userAvatarNotifier,
+                          builder: (context, avatarVal, _) {
+                            return UserAvatar(
+                              avatarPathOrUrl: avatarVal,
+                              userName: userName,
+                              radius: 16,
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -228,18 +239,18 @@ class AboutView extends StatelessWidget {
                       // Developer list
                       _buildDevCard(
                         tag: "DEVELOPED BY",
-                        name: "Varun Sarangire",
-                        role: "Flutter Developer/ UI/UX DESIGNER",
+                        name: "Varun Sham Sarangire",
+                        role: "Flutter Developer/UI/UX DESIGNER/Analyzer/Tester/Backend Designer",
                       ),
                       _buildDevCard(
                         tag: null,
                         name: "Swaraj Sunil Kale",
-                        role: "Backend Developer/Admin",
+                        role: "Backend Analyzer/UI/UX DESIGNER/coder/Coder",
                       ),
                       _buildDevCard(
                         tag: null,
                         name: "Sangharsh Shankarrao Sabale",
-                        role: "Technician, Tester",
+                        role: "UI/UX DESIGNER/Technician/Tester",
                       ),
 
                       // Footer section
