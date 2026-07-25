@@ -651,7 +651,7 @@ class _AppShellState extends State<AppShell> {
     onBack: _safePop,
   );
 
-  Widget _buildUpdates() => const UpdatesView();
+  Widget _buildUpdates() => UpdatesView(onBack: _safePop);
 
   Widget _buildSaved() => SavedView(
         savedSubjects: _bookmarkedSubjects,

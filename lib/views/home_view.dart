@@ -217,24 +217,24 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                    Container(
-                                      height: 88,
-                                      width: 120,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.isDark ? AppColors.bgCard : Colors.white,
-                                        borderRadius: BorderRadius.circular(16),
-                                        border: Border.all(
-                                          color: AppColors.primary.withValues(alpha: AppColors.isDark ? 0.35 : 0.2),
-                                          width: 1,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: AppColors.primary.withValues(alpha: AppColors.isDark ? 0.2 : 0.08),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
+                                  Container(
+                                    height: 88,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: AppColors.primary.withValues(alpha: 0.2),
+                                        width: 1,
                                       ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.primary.withValues(alpha: 0.1),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15),
                                       child: Image.asset(
@@ -443,52 +443,6 @@ class _HomeViewState extends State<HomeView> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        // ── Quick Access Action Pills ──
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildQuickActionChip(
-                                icon: Icons.bookmark_outline_rounded,
-                                label: "Diploma",
-                                color: AppColors.tealAccent,
-                                onTap: () => widget.onCourseSelected("Diploma"),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _buildQuickActionChip(
-                                icon: Icons.emoji_events_outlined,
-                                label: "Degree",
-                                color: AppColors.accent,
-                                onTap: () => widget.onCourseSelected("Degree"),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _buildQuickActionChip(
-                                icon: Icons.auto_awesome_rounded,
-                                label: "Courses",
-                                color: AppColors.primaryLight,
-                                onTap: _showAllCoursesSheet,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _buildQuickActionChip(
-                                icon: Icons.campaign_rounded,
-                                label: "Updates",
-                                color: AppColors.blueInfo,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const UpdatesView()),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 20),
                         // ── Promotional Banner Ad ──
                         Container(
@@ -568,7 +522,10 @@ class _HomeViewState extends State<HomeView> {
                         ),
                         const SizedBox(height: 12),
                         Container(
-                          padding: const EdgeInsets.all(18),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.bgCard,
                             borderRadius: BorderRadius.circular(16),
@@ -576,84 +533,79 @@ class _HomeViewState extends State<HomeView> {
                             boxShadow: [
                               BoxShadow(
                                 color: AppColors.primary.withValues(alpha: 0.04),
-                                blurRadius: 10,
+                                blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
                             ],
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryPale,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      "ONGOING",
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.5,
-                                        color: AppColors.primaryLight,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    "Exam Dept",
-                                    style: TextStyle(
-                                      color: AppColors.textMuted,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                "Discover the new semester modules and examination schedules now released.",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: AppColors.textPrimary,
-                                  height: 1.5,
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryPale,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  Icons.notifications_active_outlined,
+                                  color: AppColors.primaryLight,
+                                  size: 20,
                                 ),
                               ),
-                              const SizedBox(height: 14),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const UpdatesView(),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "New Semester Modules & Timetable",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 14.5,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
                                       ),
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
                                     ),
-                                    backgroundColor: AppColors.primary.withValues(
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      "Official exam department release notes",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 12.5,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const UpdatesView(),
+                                    ),
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(16),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withValues(
                                       alpha: 0.1,
                                     ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
                                   child: Text(
-                                    "View Details",
+                                    "View",
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 12.5,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primary,
                                     ),
@@ -1064,15 +1016,15 @@ class _HomeViewState extends State<HomeView> {
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
         decoration: BoxDecoration(
           color: AppColors.bgCard,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.borderCard),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.04),
-              blurRadius: 8,
+              color: AppColors.primary.withValues(alpha: 0.05),
+              blurRadius: 10,
               offset: const Offset(0, 3),
             ),
           ],
@@ -1085,16 +1037,16 @@ class _HomeViewState extends State<HomeView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(icon, color: color, size: 20),
+                  child: Icon(icon, color: color, size: 24),
                 ),
                 if (isComingSoon)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppColors.accentPale,
                       borderRadius: BorderRadius.circular(8),
@@ -1103,7 +1055,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Text(
                       "Soon",
                       style: TextStyle(
-                        fontSize: 10.5,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: AppColors.accent,
                       ),
@@ -1112,79 +1064,29 @@ class _HomeViewState extends State<HomeView> {
                 else
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    size: 11,
+                    size: 13,
                     color: AppColors.textMuted,
                   ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Text(
               displayTitle,
               style: TextStyle(
-                fontSize: 17,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Outfit',
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               isComingSoon ? "Content Empty • Coming Soon" : description,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 12.5,
+                fontSize: 13,
                 color: isComingSoon ? AppColors.textMuted : AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickActionChip({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderCard),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: AppColors.isDark ? 0.08 : 0.03),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 18),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
               ),
             ),
           ],
