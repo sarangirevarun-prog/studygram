@@ -654,7 +654,7 @@ class _HomeViewState extends State<HomeView> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Icon(
-                                  Icons.notifications_active_outlined,
+                                  Icons.system_update_alt_rounded,
                                   color: AppColors.primaryLight,
                                   size: 18,
                                 ),
@@ -665,7 +665,7 @@ class _HomeViewState extends State<HomeView> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "New Semester Modules & Timetable",
+                                      "Check for App Updates",
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -676,7 +676,7 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      "Official exam department release notes",
+                                      "Get the latest version & study materials",
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -710,7 +710,7 @@ class _HomeViewState extends State<HomeView> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
-                                    "View",
+                                    "Check",
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
