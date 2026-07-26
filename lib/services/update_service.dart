@@ -5,11 +5,9 @@ import 'package:study_gram/theme/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UpdateService {
-  static const int currentAppVersionCode = 3;
-  static const String currentAppVersionName = "1.0.2";
+  static const int currentAppVersionCode = 2;
+  static const String currentAppVersionName = "1.0.1";
   
-  static final ValueNotifier<bool> isUpdateAvailableNotifier = ValueNotifier<bool>(false);
-
   // GitHub Raw JSON link for auto-updates
   static const String versionJsonUrl =
       "https://raw.githubusercontent.com/sarangirevarun-prog/studygram/main/app_version.json";
@@ -21,13 +19,7 @@ class UpdateService {
           .get(Uri.parse(versionJsonUrl))
           .timeout(const Duration(seconds: 5));
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
-        final int remoteCode = data['version_code'] is int
-            ? data['version_code']
-            : int.tryParse("${data['version_code']}") ?? currentAppVersionCode;
-        final String apkUrl = "${data['apk_url'] ?? ''}";
-        isUpdateAvailableNotifier.value = (remoteCode > currentAppVersionCode && apkUrl.isNotEmpty);
-        return data;
+        return jsonDecode(response.body) as Map<String, dynamic>;
       }
     } catch (e) {
       debugPrint("Update check failed: $e");

@@ -86,6 +86,44 @@ class _ProfileViewState extends State<ProfileView> {
 
 
 
+  void _showUrlDialog() {
+    final urlController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: AppColors.bgCard,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text("Paste Image Link", style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+          content: TextField(
+            controller: urlController,
+            style: TextStyle(color: AppColors.textPrimary),
+            decoration: const InputDecoration(
+              hintText: "https://example.com/avatar.jpg",
+              labelText: "Direct Image URL",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                final url = urlController.text.trim();
+                if (url.isNotEmpty) {
+                  widget.onUpdateAvatar(url);
+                  Navigator.pop(ctx);
+                }
+              },
+              child: Text("Save", style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showPresetAvatarsSheet() {
     showModalBottomSheet(
       context: context,
@@ -101,7 +139,6 @@ class _ProfileViewState extends State<ProfileView> {
           maxChildSize: 0.85,
           expand: false,
           builder: (context, scrollController) {
-            final hasAvatar = widget.userAvatarNotifier.value != null;
             return Column(
               children: [
                 const SizedBox(height: 12),
@@ -117,25 +154,16 @@ class _ProfileViewState extends State<ProfileView> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Choose Student Avatar",
+                        "Choose Avatar",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const Spacer(),
-                      if (hasAvatar)
-                        TextButton.icon(
-                          onPressed: () {
-                            widget.onUpdateAvatar(null);
-                            Navigator.pop(ctx);
-                          },
-                          icon: Icon(Icons.delete_outline_rounded, color: AppColors.redDanger, size: 16),
-                          label: Text("Remove", style: TextStyle(color: AppColors.redDanger, fontSize: 13, fontWeight: FontWeight.bold)),
-                        ),
                       IconButton(
                         onPressed: () => Navigator.pop(ctx),
                         icon: Icon(Icons.close_rounded, color: AppColors.textMuted, size: 20),
@@ -208,6 +236,91 @@ class _ProfileViewState extends State<ProfileView> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  void _showAvatarOptionsSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.bgCard,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 38,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.borderCard,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "Profile Picture Options",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentPale,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.face_rounded, color: AppColors.accent, size: 20),
+                ),
+                title: Text("Choose Student Avatar", style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _showPresetAvatarsSheet();
+                },
+              ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.tealPale,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.link_rounded, color: AppColors.tealAccent, size: 20),
+                ),
+                title: Text("Paste Image Link", style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _showUrlDialog();
+                },
+              ),
+              if (widget.userAvatarNotifier.value != null)
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.redPale,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.delete_outline_rounded, color: AppColors.redDanger, size: 20),
+                  ),
+                  title: Text("Remove Picture", style: TextStyle(color: AppColors.redDanger, fontWeight: FontWeight.w600)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    widget.onUpdateAvatar(null);
+                  },
+                ),
+              const SizedBox(height: 12),
+            ],
+          ),
         );
       },
     );
@@ -358,7 +471,7 @@ class _ProfileViewState extends State<ProfileView> {
                                       userName: userName,
                                       radius: 32,
                                       showEditBadge: false,
-                                      onTap: _showPresetAvatarsSheet,
+                                      onTap: _showAvatarOptionsSheet,
                                     );
                                   },
                                 ),

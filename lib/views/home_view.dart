@@ -6,7 +6,6 @@ import 'package:study_gram/widgets/ambient_orbs.dart';
 import 'package:study_gram/widgets/pull_refresh.dart';
 import 'package:study_gram/views/updates_view.dart';
 import 'package:study_gram/widgets/user_avatar.dart';
-import 'package:study_gram/services/update_service.dart';
 
 class HomeView extends StatefulWidget {
   final ValueNotifier<String> userNameNotifier;
@@ -648,27 +647,17 @@ class _HomeViewState extends State<HomeView> {
                           ),
                           child: Row(
                             children: [
-                              ValueListenableBuilder<bool>(
-                                valueListenable: UpdateService.isUpdateAvailableNotifier,
-                                builder: (context, hasUpdate, _) {
-                                  return Badge(
-                                    isLabelVisible: hasUpdate,
-                                    smallSize: 8,
-                                    backgroundColor: AppColors.redDanger,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primaryPale,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Icon(
-                                        Icons.system_update_alt_rounded,
-                                        color: AppColors.primaryLight,
-                                        size: 18,
-                                      ),
-                                    ),
-                                  );
-                                },
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryPale,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  Icons.system_update_alt_rounded,
+                                  color: AppColors.primaryLight,
+                                  size: 18,
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
