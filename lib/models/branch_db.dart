@@ -87,7 +87,7 @@ const Map<String, BranchInfo> diplomaBranchInfoDb = {
 // ─── Branch → Subjects Database (Flat list for search) ───────────────────────
 const Map<String, List<String>> branchSubjectsDb = {
   "Computer Engineering": [
-    "Basic Mathematics", "Communication Skills", "Basic Science", "Fundamentals of ICT", 
+    "Basic Mathematics", "Communication Skills", "Basic Science", "Basic Physics", "Basic Chemistry", "Fundamentals of ICT", 
     "Engineering Workshop", "Yoga & Meditation", "Engineering Graphics",
     "Applied Mathematics", "Electrical & Electronics", "Programming in C", "Linux Basics", 
     "Professional Communication", "Social & Life Skills", "Web Page Designing",

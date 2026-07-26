@@ -19,7 +19,8 @@ class HomeView extends StatefulWidget {
     int? year,
     int? semester,
     List<String>? subjects,
-  }) onSubjectSelected;
+  })
+  onSubjectSelected;
 
   const HomeView({
     super.key,
@@ -59,8 +60,6 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     // Filter matching subjects across all branches & schemes
@@ -74,8 +73,13 @@ class _HomeViewState extends State<HomeView> {
           years.forEach((year, sems) {
             sems.forEach((semester, subjects) {
               for (final subject in subjects) {
-                if (_searchQuery.isEmpty || subject.toLowerCase().contains(queryLower)) {
-                  if (!matchingSubjects.any((element) => element['subject'] == subject && element['branch'] == branch)) {
+                if (_searchQuery.isEmpty ||
+                    subject.toLowerCase().contains(queryLower)) {
+                  if (!matchingSubjects.any(
+                    (element) =>
+                        element['subject'] == subject &&
+                        element['branch'] == branch,
+                  )) {
                     matchingSubjects.add({
                       'subject': subject,
                       'branch': branch,
@@ -104,12 +108,12 @@ class _HomeViewState extends State<HomeView> {
               child: SafeArea(
                 child: PullRefresh(
                   child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                    physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         // ── Header Row ──
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,19 +121,23 @@ class _HomeViewState extends State<HomeView> {
                             Row(
                               children: [
                                 Container(
-                                  width: 40,
-                                  height: 40,
+                                  width: 42,
+                                  height: 42,
                                   padding: const EdgeInsets.all(2),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: AppColors.bgCard,
                                     border: Border.all(
-                                      color: AppColors.primaryLight.withValues(alpha: 0.4),
+                                      color: AppColors.primaryLight.withValues(
+                                        alpha: 0.4,
+                                      ),
                                       width: 2,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppColors.primary.withValues(alpha: 0.12),
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.12,
+                                        ),
                                         blurRadius: 8,
                                         offset: const Offset(0, 2),
                                       ),
@@ -142,11 +150,11 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 10),
                                 Text(
                                   "Studygram",
                                   style: TextStyle(
-                                    fontSize: 22,
+                                    fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Outfit',
                                     color: AppColors.textPrimary,
@@ -167,11 +175,10 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        // ── Greeting Card with active search ──
+                        const SizedBox(height: 16),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(14),
+                          padding: const EdgeInsets.all(18),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
@@ -183,8 +190,20 @@ class _HomeViewState extends State<HomeView> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: AppColors.borderCard),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: AppColors.borderCard,
+                              width: 1.2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.05,
+                                ),
+                                blurRadius: 12,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,79 +213,104 @@ class _HomeViewState extends State<HomeView> {
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "${AppStrings.get('hello')}, $userName ",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 20.5,
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.textPrimary,
+                                            letterSpacing: -0.2,
                                           ),
                                         ),
-                                        const SizedBox(height: 2),
+                                        const SizedBox(height: 4),
                                         Text(
                                           AppStrings.get('unlockPotential'),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 13,
+                                            fontSize: 14.5,
                                             color: AppColors.textSecondary,
+                                            height: 1.35,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 14),
                                   Container(
-                                    height: 70,
-                                    width: 95,
+                                    height: 76,
+                                    width: 100,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(14),
+                                      borderRadius: BorderRadius.circular(15),
                                       border: Border.all(
-                                        color: AppColors.primary.withValues(alpha: 0.2),
-                                        width: 1,
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        width: 1.2,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColors.primary.withValues(alpha: 0.1),
-                                          blurRadius: 10,
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          blurRadius: 8,
                                           offset: const Offset(0, 3),
                                         ),
                                       ],
                                     ),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(13),
+                                      borderRadius: BorderRadius.circular(14),
                                       child: Image.asset(
                                         "assets/images/students_banner.png",
                                         fit: BoxFit.contain,
-                                        errorBuilder: (context, error, stackTrace) => Container(
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primaryPale,
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          child: Icon(
-                                            Icons.school_rounded,
-                                            color: AppColors.primary,
-                                            size: 30,
-                                          ),
-                                        ),
+                                        errorBuilder:
+                                            (
+                                              context,
+                                              error,
+                                              stackTrace,
+                                            ) => Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryPale,
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                              ),
+                                              child: Icon(
+                                                Icons.school_rounded,
+                                                color: AppColors.primary,
+                                                size: 28,
+                                              ),
+                                            ),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
                               // Search bar
                               Container(
                                 decoration: BoxDecoration(
                                   color: AppColors.bgCard,
-                                  borderRadius: BorderRadius.circular(13),
-                                  border: Border.all(color: AppColors.borderCard),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: AppColors.borderCard,
+                                    width: 1.0,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.02,
+                                      ),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
                                 child: TextField(
                                   controller: _searchController,
@@ -278,26 +322,27 @@ class _HomeViewState extends State<HomeView> {
                                   },
                                   style: TextStyle(
                                     color: AppColors.textPrimary,
-                                    fontSize: 15,
+                                    fontSize: 16.5,
                                   ),
                                   decoration: InputDecoration(
                                     hintText: AppStrings.get('searchSubjects'),
                                     hintStyle: TextStyle(
                                       color: AppColors.textMuted,
-                                      fontSize: 15,
+                                      fontSize: 16,
                                     ),
                                     border: InputBorder.none,
                                     isDense: true,
                                     contentPadding: const EdgeInsets.symmetric(
                                       vertical: 12,
+                                      horizontal: 8,
                                     ),
                                     prefixIcon: Icon(
-                                      Icons.search,
+                                      Icons.search_rounded,
                                       color: AppColors.primaryLight,
                                       size: 18,
                                     ),
                                     prefixIconConstraints: const BoxConstraints(
-                                      minWidth: 36,
+                                      minWidth: 38,
                                       minHeight: 18,
                                     ),
                                     suffixIcon: shouldShowSearchResults
@@ -311,15 +356,15 @@ class _HomeViewState extends State<HomeView> {
                                               });
                                             },
                                             child: Icon(
-                                              Icons.close,
+                                              Icons.close_rounded,
                                               color: AppColors.textSecondary,
-                                              size: 18,
+                                              size: 20,
                                             ),
                                           )
                                         : null,
                                     suffixIconConstraints: const BoxConstraints(
-                                      minWidth: 32,
-                                      minHeight: 16,
+                                      minWidth: 38,
+                                      minHeight: 20,
                                     ),
                                   ),
                                   onChanged: (val) {
@@ -332,29 +377,39 @@ class _HomeViewState extends State<HomeView> {
                               if (matchingSubjects.isNotEmpty) ...[
                                 const SizedBox(height: 12),
                                 Container(
-                                  constraints: const BoxConstraints(maxHeight: 160),
+                                  constraints: const BoxConstraints(
+                                    maxHeight: 160,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.bgCard,
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: AppColors.borderCard),
+                                    border: Border.all(
+                                      color: AppColors.borderCard,
+                                    ),
                                   ),
                                   child: ListView.separated(
                                     shrinkWrap: true,
                                     physics: const ClampingScrollPhysics(),
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    itemCount: matchingSubjects.length,
-                                    separatorBuilder: (context, index) => Divider(
-                                      height: 1,
-                                      color: AppColors.borderCard,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4,
                                     ),
+                                    itemCount: matchingSubjects.length,
+                                    separatorBuilder: (context, index) =>
+                                        Divider(
+                                          height: 1,
+                                          color: AppColors.borderCard,
+                                        ),
                                     itemBuilder: (context, index) {
                                       final item = matchingSubjects[index];
                                       final subject = item['subject'] as String;
                                       final branch = item['branch'] as String;
                                       final scheme = item['scheme'] as String;
                                       final semester = item['semester'] as int;
-                                      final subjects = item['subjects'] as List<String>;
-                                      final isKScheme = scheme.toLowerCase().contains('k');
+                                      final subjects =
+                                          item['subjects'] as List<String>;
+                                      final isKScheme = scheme
+                                          .toLowerCase()
+                                          .contains('k');
 
                                       return ListTile(
                                         dense: true,
@@ -364,7 +419,7 @@ class _HomeViewState extends State<HomeView> {
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 15,
+                                            fontSize: 17,
                                             color: AppColors.textPrimary,
                                           ),
                                         ),
@@ -373,7 +428,7 @@ class _HomeViewState extends State<HomeView> {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 14,
                                             color: AppColors.textSecondary,
                                           ),
                                         ),
@@ -381,17 +436,26 @@ class _HomeViewState extends State<HomeView> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
                                               decoration: BoxDecoration(
-                                                color: isKScheme ? AppColors.tealPale : AppColors.bluePale,
-                                                borderRadius: BorderRadius.circular(6),
+                                                color: isKScheme
+                                                    ? AppColors.tealPale
+                                                    : AppColors.bluePale,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
                                               ),
                                               child: Text(
                                                 scheme,
                                                 style: TextStyle(
-                                                  fontSize: 11,
+                                                  fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: isKScheme ? AppColors.tealAccent : AppColors.blueInfo,
+                                                  color: isKScheme
+                                                      ? AppColors.tealAccent
+                                                      : AppColors.blueInfo,
                                                 ),
                                               ),
                                             ),
@@ -431,14 +495,16 @@ class _HomeViewState extends State<HomeView> {
                                   decoration: BoxDecoration(
                                     color: AppColors.bgCard,
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: AppColors.borderCard),
+                                    border: Border.all(
+                                      color: AppColors.borderCard,
+                                    ),
                                   ),
                                   child: Text(
                                     "No matching subjects found.",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: AppColors.textMuted,
-                                      fontSize: 14,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),
@@ -446,7 +512,7 @@ class _HomeViewState extends State<HomeView> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         // ── Promotional Banner Ad ──
                         Container(
                           width: double.infinity,
@@ -466,23 +532,37 @@ class _HomeViewState extends State<HomeView> {
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: AppColors.borderCard),
+                            border: Border.all(
+                              color: AppColors.borderCard,
+                              width: 1.0,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.04,
+                                ),
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
                           child: Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(9),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.1),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.12,
+                                  ),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   Icons.campaign_rounded,
                                   color: AppColors.primaryLight,
-                                  size: 24,
+                                  size: 22,
                                 ),
                               ),
-                              const SizedBox(width: 14),
+                              const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -492,7 +572,7 @@ class _HomeViewState extends State<HomeView> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 16.5,
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.textPrimary,
                                       ),
@@ -503,39 +583,63 @@ class _HomeViewState extends State<HomeView> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 12.5,
+                                        fontSize: 14,
                                         color: AppColors.textSecondary,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.bgCard,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.primaryLight.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 12,
+                                  color: AppColors.primaryLight,
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
                         // ── Latest Updates ──
                         Text(
                           AppStrings.get('latestUpdates'),
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 19,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
+                            letterSpacing: -0.2,
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 25,
-                            vertical: 20,
+                            horizontal: 16,
+                            vertical: 14,
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.bgCard,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: AppColors.borderCard),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.borderCard,
+                              width: 1.0,
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.04),
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.03,
+                                ),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -544,10 +648,10 @@ class _HomeViewState extends State<HomeView> {
                           child: Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(7),
+                                padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: AppColors.primaryPale,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Icon(
                                   Icons.notifications_active_outlined,
@@ -555,7 +659,7 @@ class _HomeViewState extends State<HomeView> {
                                   size: 18,
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -565,7 +669,7 @@ class _HomeViewState extends State<HomeView> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 13.5,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.textPrimary,
                                       ),
@@ -576,14 +680,14 @@ class _HomeViewState extends State<HomeView> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 14,
                                         color: AppColors.textSecondary,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 10),
                               InkWell(
                                 onTap: () {
                                   Navigator.push(
@@ -593,22 +697,22 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                   );
                                 },
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(20),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 5,
+                                    horizontal: 14,
+                                    vertical: 8,
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColors.primary.withValues(
                                       alpha: 0.1,
                                     ),
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     "View",
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primary,
                                     ),
@@ -618,7 +722,7 @@ class _HomeViewState extends State<HomeView> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 22),
                         // ── Course Grid ──
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -626,31 +730,32 @@ class _HomeViewState extends State<HomeView> {
                             Text(
                               AppStrings.get('chooseCourse'),
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 19,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
+                                letterSpacing: -0.2,
                               ),
                             ),
                             TextButton(
                               onPressed: _showAllCoursesSheet,
                               style: TextButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
                               ),
                               child: Text(
                                 AppStrings.get('seeAll'),
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 16,
                                   color: AppColors.primaryLight,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Row(
                           children: [
                             Expanded(
@@ -658,25 +763,29 @@ class _HomeViewState extends State<HomeView> {
                                 context,
                                 courseKey: "Diploma",
                                 displayTitle: AppStrings.get('diploma'),
-                                description: AppStrings.get('polytechnicCourse'),
+                                description: AppStrings.get(
+                                  'polytechnicCourse',
+                                ),
                                 icon: Icons.bookmark_outline_rounded,
                                 color: AppColors.tealAccent,
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 12),
                             Expanded(
                               child: _buildCourseCard(
                                 context,
                                 courseKey: "Degree",
                                 displayTitle: AppStrings.get('degree'),
-                                description: AppStrings.get('bachelorEngineering'),
+                                description: AppStrings.get(
+                                  'bachelorEngineering',
+                                ),
                                 icon: Icons.emoji_events_outlined,
                                 color: AppColors.accent,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Row(
                           children: [
                             Expanded(
@@ -684,19 +793,23 @@ class _HomeViewState extends State<HomeView> {
                                 context,
                                 courseKey: "BCA",
                                 displayTitle: AppStrings.get('bca'),
-                                description: AppStrings.get('bachelorComputerApps'),
+                                description: AppStrings.get(
+                                  'bachelorComputerApps',
+                                ),
                                 icon: Icons.laptop_chromebook_rounded,
                                 color: AppColors.primaryLight,
                                 isComingSoon: true,
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 12),
                             Expanded(
                               child: _buildCourseCard(
                                 context,
                                 courseKey: "MCA",
                                 displayTitle: AppStrings.get('mca'),
-                                description: AppStrings.get('masterComputerApps'),
+                                description: AppStrings.get(
+                                  'masterComputerApps',
+                                ),
                                 icon: Icons.workspace_premium_outlined,
                                 color: AppColors.blueInfo,
                                 isComingSoon: true,
@@ -704,7 +817,7 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 32),
                       ],
                     ),
                   ),
@@ -835,14 +948,18 @@ class _HomeViewState extends State<HomeView> {
                       Text(
                         "All Educational Courses",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
                       ),
                       IconButton(
                         onPressed: () => Navigator.pop(ctx),
-                        icon: Icon(Icons.close_rounded, color: AppColors.textMuted, size: 20),
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: AppColors.textMuted,
+                          size: 20,
+                        ),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -853,9 +970,13 @@ class _HomeViewState extends State<HomeView> {
                 Expanded(
                   child: ListView.separated(
                     controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 10,
+                    ),
                     itemCount: allCourses.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 10),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final item = allCourses[index];
                       final isAvail = item['isAvailable'] as bool;
@@ -872,19 +993,27 @@ class _HomeViewState extends State<HomeView> {
                               SnackBar(
                                 content: Row(
                                   children: [
-                                    const Icon(Icons.info_outline_rounded, color: Colors.white, size: 18),
+                                    const Icon(
+                                      Icons.info_outline_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
                                         "${item['title']} study materials are coming soon!",
-                                        style: const TextStyle(fontWeight: FontWeight.w600),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                                 backgroundColor: AppColors.primary,
                                 behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                                 duration: const Duration(seconds: 3),
                               ),
                             );
@@ -906,7 +1035,11 @@ class _HomeViewState extends State<HomeView> {
                                   color: color.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Icon(item['icon'] as IconData, color: color, size: 22),
+                                child: Icon(
+                                  item['icon'] as IconData,
+                                  color: color,
+                                  size: 22,
+                                ),
                               ),
                               const SizedBox(width: 14),
                               Expanded(
@@ -916,7 +1049,7 @@ class _HomeViewState extends State<HomeView> {
                                     Text(
                                       item['title'] as String,
                                       style: TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 17,
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.textPrimary,
                                       ),
@@ -925,7 +1058,7 @@ class _HomeViewState extends State<HomeView> {
                                     Text(
                                       item['desc'] as String,
                                       style: TextStyle(
-                                        fontSize: 12.5,
+                                        fontSize: 14.5,
                                         color: AppColors.textSecondary,
                                       ),
                                     ),
@@ -935,7 +1068,10 @@ class _HomeViewState extends State<HomeView> {
                               const SizedBox(width: 8),
                               if (isAvail)
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.primaryPale,
                                     borderRadius: BorderRadius.circular(8),
@@ -943,7 +1079,7 @@ class _HomeViewState extends State<HomeView> {
                                   child: Text(
                                     "Active",
                                     style: TextStyle(
-                                      fontSize: 11,
+                                      fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primaryLight,
                                     ),
@@ -951,7 +1087,10 @@ class _HomeViewState extends State<HomeView> {
                                 )
                               else
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.accentPale,
                                     borderRadius: BorderRadius.circular(8),
@@ -959,7 +1098,7 @@ class _HomeViewState extends State<HomeView> {
                                   child: Text(
                                     "Soon",
                                     style: TextStyle(
-                                      fontSize: 11,
+                                      fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.accent,
                                     ),
@@ -997,7 +1136,11 @@ class _HomeViewState extends State<HomeView> {
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded, color: Colors.white, size: 18),
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -1009,7 +1152,9 @@ class _HomeViewState extends State<HomeView> {
               ),
               backgroundColor: AppColors.primary,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               duration: const Duration(seconds: 3),
             ),
           );
@@ -1019,15 +1164,15 @@ class _HomeViewState extends State<HomeView> {
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
           color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderCard),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.borderCard, width: 1.0),
           boxShadow: [
             BoxShadow(
               color: AppColors.primary.withValues(alpha: 0.04),
-              blurRadius: 6,
+              blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
@@ -1040,25 +1185,30 @@ class _HomeViewState extends State<HomeView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(7),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(9),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon, color: color, size: 18),
+                  child: Icon(icon, color: color, size: 20),
                 ),
                 if (isComingSoon)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.accentPale,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: AppColors.accent.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Text(
                       "Soon",
                       style: TextStyle(
-                        fontSize: 10.5,
+                        fontSize: 12.5,
                         fontWeight: FontWeight.bold,
                         color: AppColors.accent,
                       ),
@@ -1067,19 +1217,20 @@ class _HomeViewState extends State<HomeView> {
                 else
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    size: 11,
+                    size: 12,
                     color: AppColors.textMuted,
                   ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
             Text(
               displayTitle,
               style: TextStyle(
-                fontSize: 15.5,
+                fontSize: 17,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Outfit',
                 color: AppColors.textPrimary,
+                letterSpacing: -0.2,
               ),
             ),
             const SizedBox(height: 2),
@@ -1088,8 +1239,11 @@ class _HomeViewState extends State<HomeView> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 11.5,
-                color: isComingSoon ? AppColors.textMuted : AppColors.textSecondary,
+                fontSize: 13.5,
+                color: isComingSoon
+                    ? AppColors.textMuted
+                    : AppColors.textSecondary,
+                height: 1.25,
               ),
             ),
           ],

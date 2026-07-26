@@ -288,14 +288,22 @@ class UserAvatar extends StatelessWidget {
       }
     }
 
-    // 2. Network Image URL
-    if (val.startsWith('http://') || val.startsWith('https://')) {
+    // 2. Network Image URL or Domain URL
+    String normUrl = _normalizeUrl(val);
+    if (normUrl.startsWith('http://') || normUrl.startsWith('https://')) {
       return Image.network(
-        val,
+        normUrl,
         width: size,
         height: size,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildInitialsFallback(size),
+        headers: const {
+          'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept':
+              'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+        },
+        errorBuilder:
+            (context, error, stackTrace) => _buildInitialsFallback(size),
       );
     }
 
@@ -329,6 +337,43 @@ class UserAvatar extends StatelessWidget {
     } catch (_) {}
 
     return _buildInitialsFallback(size);
+  }
+
+  String _normalizeUrl(String url) {
+    String clean = url.trim();
+    if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+      if (clean.contains('.') &&
+          !clean.startsWith('data:') &&
+          !clean.startsWith('/') &&
+          !clean.startsWith('preset:')) {
+        clean = 'https://$clean';
+      }
+    }
+    // Convert Google Drive sharing link to direct view URL
+    if (clean.contains('drive.google.com')) {
+      final match =
+          RegExp(r'/file/d/([a-zA-Z0-9_-]+)').firstMatch(clean) ??
+          RegExp(r'id=([a-zA-Z0-9_-]+)').firstMatch(clean);
+      if (match != null && match.groupCount >= 1) {
+        final fileId = match.group(1);
+        if (fileId != null) {
+          return 'https://lh3.googleusercontent.com/d/$fileId=w1000';
+        }
+      }
+    }
+    // Convert Dropbox link
+    if (clean.contains('dropbox.com') && clean.endsWith('dl=0')) {
+      return clean.replaceAll('dl=0', 'raw=1');
+    }
+    // Convert Imgur page link to direct png
+    if (clean.contains('imgur.com') && !clean.contains('i.imgur.com')) {
+      final match = RegExp(r'imgur\.com/([a-zA-Z0-9]+)$').firstMatch(clean);
+      if (match != null && match.groupCount >= 1) {
+        final id = match.group(1);
+        return 'https://i.imgur.com/$id.png';
+      }
+    }
+    return clean;
   }
 
   Widget _buildInitialsFallback(double size) {

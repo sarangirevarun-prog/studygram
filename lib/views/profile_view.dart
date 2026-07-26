@@ -3,6 +3,7 @@ import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
 import 'package:study_gram/widgets/swipe_back.dart';
 import 'package:study_gram/widgets/user_avatar.dart';
+import 'package:study_gram/widgets/pull_refresh.dart';
 
 class ProfileView extends StatefulWidget {
   final ValueNotifier<String> userNameNotifier;
@@ -411,136 +412,143 @@ class _ProfileViewState extends State<ProfileView> {
               child: Scaffold(
                 backgroundColor: AppColors.bgMain,
                 body: SafeArea(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 12),
-                        // Header Row with Back button & Screen Title
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: widget.onBack,
-                              icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
-                              padding: EdgeInsets.zero,
-                              alignment: Alignment.centerLeft,
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              AppStrings.get('profile'),
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        // Profile card
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: AppColors.bgCard,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppColors.borderCard),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.05),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
+                  child: PullRefresh(
+                    onRefresh: () async {
+                      setState(() {});
+                      await Future.delayed(const Duration(milliseconds: 600));
+                    },
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 12),
+                          // Header Row with Back button & Screen Title
+                          Row(
                             children: [
-                              ValueListenableBuilder<String?>(
-                                valueListenable: widget.userAvatarNotifier,
-                                builder: (context, avatarVal, _) {
-                                  return UserAvatar(
-                                    avatarPathOrUrl: avatarVal,
-                                    userName: userName,
-                                    radius: 32,
-                                    showEditBadge: false,
-                                    onTap: _showAvatarOptionsSheet,
-                                  );
-                                },
+                              IconButton(
+                                onPressed: widget.onBack,
+                                icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+                                padding: EdgeInsets.zero,
+                                alignment: Alignment.centerLeft,
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            userName,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () => _showEditProfileDialog(userName),
-                                          child: Icon(Icons.edit_outlined, color: AppColors.primaryLight, size: 18),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      widget.email,
-                                      style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
-                                    ),
-                                  ],
+                              const SizedBox(width: 10),
+                              Text(
+                                AppStrings.get('profile'),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 28),
-                        Text("Menu Options", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                        const SizedBox(height: 12),
-                        _buildMenuTile(
-                          icon: Icons.person_outline_rounded,
-                          title: "Edit Display Name",
-                          onTap: () => _showEditProfileDialog(userName),
-                          color: AppColors.blueInfo,
-                        ),
-                        _buildMenuTile(
-                          icon: Icons.settings_outlined,
-                          title: AppStrings.get('settings'),
-                          onTap: widget.onSettingsTap,
-                          color: AppColors.primary,
-                        ),
-                        _buildMenuTile(
-                          icon: Icons.rate_review_outlined,
-                          title: AppStrings.get('appSuggestions'),
-                          onTap: widget.onSuggestionTap,
-                          color: AppColors.tealAccent,
-                        ),
-                        _buildMenuTile(
-                          icon: Icons.grid_view_rounded,
-                          title: AppStrings.get('moreEducationApps'),
-                          onTap: widget.onMoreAppsTap,
-                          color: AppColors.accent,
-                        ),
-                        _buildMenuTile(
-                          icon: Icons.info_outline_rounded,
-                          title: AppStrings.get('aboutUs'),
-                          onTap: widget.onAboutUsTap,
-                          color: AppColors.primaryLight,
-                        ),
-                        _buildMenuTile(
-                          icon: Icons.logout_rounded,
-                          title: AppStrings.get('logout'),
-                          onTap: () => _confirmLogout(context),
-                          color: AppColors.redDanger,
-                        ),
-                        const SizedBox(height: 24),
-                      ],
+                          const SizedBox(height: 16),
+                          // Profile card
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppColors.bgCard,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: AppColors.borderCard),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withValues(alpha: 0.05),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                ValueListenableBuilder<String?>(
+                                  valueListenable: widget.userAvatarNotifier,
+                                  builder: (context, avatarVal, _) {
+                                    return UserAvatar(
+                                      avatarPathOrUrl: avatarVal,
+                                      userName: userName,
+                                      radius: 32,
+                                      showEditBadge: false,
+                                      onTap: _showAvatarOptionsSheet,
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              userName,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () => _showEditProfileDialog(userName),
+                                            child: Icon(Icons.edit_outlined, color: AppColors.primaryLight, size: 18),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        widget.email,
+                                        style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 28),
+                          Text("Menu Options", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                          const SizedBox(height: 12),
+                          _buildMenuTile(
+                            icon: Icons.person_outline_rounded,
+                            title: "Edit Display Name",
+                            onTap: () => _showEditProfileDialog(userName),
+                            color: AppColors.blueInfo,
+                          ),
+                          _buildMenuTile(
+                            icon: Icons.settings_outlined,
+                            title: AppStrings.get('settings'),
+                            onTap: widget.onSettingsTap,
+                            color: AppColors.primary,
+                          ),
+                          _buildMenuTile(
+                            icon: Icons.rate_review_outlined,
+                            title: AppStrings.get('appSuggestions'),
+                            onTap: widget.onSuggestionTap,
+                            color: AppColors.tealAccent,
+                          ),
+                          _buildMenuTile(
+                            icon: Icons.grid_view_rounded,
+                            title: AppStrings.get('moreEducationApps'),
+                            onTap: widget.onMoreAppsTap,
+                            color: AppColors.accent,
+                          ),
+                          _buildMenuTile(
+                            icon: Icons.info_outline_rounded,
+                            title: AppStrings.get('aboutUs'),
+                            onTap: widget.onAboutUsTap,
+                            color: AppColors.primaryLight,
+                          ),
+                          _buildMenuTile(
+                            icon: Icons.logout_rounded,
+                            title: AppStrings.get('logout'),
+                            onTap: () => _confirmLogout(context),
+                            color: AppColors.redDanger,
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
                     ),
                   ),
                 ),

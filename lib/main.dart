@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:study_gram/firebase_options.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
+import 'package:study_gram/services/update_service.dart';
 import 'package:study_gram/widgets/device_frame.dart';
 import 'package:study_gram/views/login_view.dart';
 import 'package:study_gram/views/register_view.dart';
@@ -184,6 +185,12 @@ class _AppShellState extends State<AppShell> {
     if (mounted) {
       setState(() {
         _showSplash = false;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final context = _navKey.currentContext;
+        if (context != null && mounted) {
+          UpdateService.checkForUpdates(context, silent: true);
+        }
       });
     }
   }
@@ -476,6 +483,136 @@ class _AppShellState extends State<AppShell> {
     String selectedScheme = scheme ?? "K Scheme";
     List<String> selectedSubjects = subjects ?? [];
 
+    final cleanSub = subject.toLowerCase().trim();
+    if (cleanSub == "basic science" || cleanSub == "applied science") {
+      final isBasic = cleanSub == "basic science";
+      final physicsName = isBasic ? "Basic Physics" : "Applied Physics";
+      final chemistryName = isBasic ? "Basic Chemistry" : "Applied Chemistry";
+      final context = _navKey.currentContext;
+      if (context != null) {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: AppColors.bgCard,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          builder: (ctx) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppColors.borderCard,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Select $subject Module",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "Choose which subject module you want to open:",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.bgMain,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.borderCard),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        leading: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.bluePale,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.bolt_rounded, color: AppColors.blueInfo, size: 24),
+                        ),
+                        title: Text(
+                          physicsName,
+                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                        ),
+                        subtitle: Text("Syllabus, Notes & Video Lectures", style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                        trailing: Icon(Icons.arrow_forward_ios_rounded, color: AppColors.blueInfo, size: 16),
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          _openSubject(
+                            physicsName,
+                            branch,
+                            scheme: scheme,
+                            year: year,
+                            semester: semester,
+                            subjects: subjects,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.bgMain,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.borderCard),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        leading: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.tealPale,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.science_rounded, color: AppColors.tealAccent, size: 24),
+                        ),
+                        title: Text(
+                          chemistryName,
+                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                        ),
+                        subtitle: Text("Syllabus, Notes & Video Lectures", style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                        trailing: Icon(Icons.arrow_forward_ios_rounded, color: AppColors.tealAccent, size: 16),
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          _openSubject(
+                            chemistryName,
+                            branch,
+                            scheme: scheme,
+                            year: year,
+                            semester: semester,
+                            subjects: subjects,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+        return;
+      }
+    }
+
     if (scheme == null || year == null || semester == null || subjects == null || subjects.isEmpty) {
       final branchData = branchSemestersDb[branch];
       if (branchData != null) {
@@ -565,8 +702,14 @@ class _AppShellState extends State<AppShell> {
     subjects: _selectedSemesterSubjects,
     onBack: _safePop,
     onSubjectSelected: (subject) {
-      setState(() => _selectedSubject = subject);
-      _push(_buildMaterials(), '/materials');
+      _openSubject(
+        subject,
+        _selectedBranch,
+        scheme: _selectedScheme,
+        year: _selectedYear,
+        semester: _selectedSemester,
+        subjects: _selectedSemesterSubjects,
+      );
     },
   );
 
@@ -679,16 +822,14 @@ class _AppShellState extends State<AppShell> {
               }
             }
 
-            setState(() {
-              _selectedSubject = subject;
-              _selectedBranch = branch;
-              _selectedCourse = "Diploma";
-              _selectedScheme = scheme;
-              _selectedYear = year;
-              _selectedSemester = sem;
-              _selectedSemesterSubjects = subjects;
-            });
-            _push(_buildMaterials(), '/materials');
+            _openSubject(
+              subject,
+              branch,
+              scheme: scheme,
+              year: year,
+              semester: sem,
+              subjects: subjects,
+            );
           } else {
             // Fallback for legacy key
             final branch = _findBranchForLegacySubject(key);
