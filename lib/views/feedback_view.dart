@@ -288,13 +288,26 @@ class _FeedbackViewState extends State<FeedbackView> {
                   const SizedBox(height: 24),
 
                   // Rating selector
-                  Text(
-                    "App Rating",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "App Rating",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        "$_rating / 5 ⭐",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.accent,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -302,10 +315,12 @@ class _FeedbackViewState extends State<FeedbackView> {
                       final starIndex = index + 1;
                       return IconButton(
                         onPressed: () => setState(() => _rating = starIndex),
+                        padding: const EdgeInsets.only(right: 8),
+                        constraints: const BoxConstraints(),
                         icon: Icon(
                           starIndex <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
                           color: AppColors.accent,
-                          size: 32,
+                          size: 34,
                         ),
                       );
                     }),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
+import 'package:study_gram/services/update_service.dart';
 
 class ResponsiveDeviceFrame extends StatelessWidget {
   final Widget child;
@@ -120,9 +121,19 @@ class ResponsiveDeviceFrame extends StatelessWidget {
             label: AppStrings.get('home'),
           ),
           BottomNavigationBarItem(
-            icon: const Padding(
-              padding: EdgeInsets.only(bottom: 3),
-              child: Icon(Icons.campaign_rounded, size: 22),
+            icon: Padding(
+              padding: const EdgeInsets.only(bottom: 3),
+              child: ValueListenableBuilder<bool>(
+                valueListenable: UpdateService.isUpdateAvailableNotifier,
+                builder: (context, hasUpdate, child) {
+                  return Badge(
+                    isLabelVisible: hasUpdate,
+                    smallSize: 8,
+                    backgroundColor: AppColors.redDanger,
+                    child: const Icon(Icons.campaign_rounded, size: 22),
+                  );
+                },
+              ),
             ),
             label: AppStrings.get('updates'),
           ),
