@@ -217,7 +217,7 @@ class AboutView extends StatelessWidget {
                         tag: "DEVELOPED BY",
                         name: "Varun Sham Sarangire",
                         role: "Flutter Developer/UI/UX DESIGNER/Analyzer/Tester/Backend Designer",
-                        contactInfo: "WhatsApp: @varun_vs24 • Insta: @varun_vs205",
+                        contactInfo: "Insta: @s.gram2026",
                       ),
                       _buildDevCard(
                         tag: null,

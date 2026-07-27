@@ -1,7 +1,7 @@
 {
-  "latest_version": "1.0.1",
-  "version_code": 2,
-  "release_notes": "• Added Basic Physics & Basic Chemistry subject selection\n• Fixed pull-to-refresh on Profile & Updates screens\n• Improved network image loading for Google Drive and cloud links\n• Added automatic remote update checker",
+  "latest_version": "1.0.2",
+  "version_code": 3,
+  "release_notes": "• Updated contact & support channels to Instagram (@s.gram2026)\n• Performance optimizations and UI enhancements",
   "apk_url": "https://github.com/sarangirevarun-prog/studygram/releases/latest/download/app-release.apk",
   "force_update": true
 }

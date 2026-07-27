@@ -5,8 +5,8 @@ import 'package:study_gram/theme/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UpdateService {
-  static const int currentAppVersionCode = 2;
-  static const String currentAppVersionName = "1.0.1";
+  static const int currentAppVersionCode = 3;
+  static const String currentAppVersionName = "1.0.2";
   
   // GitHub Raw JSON link for auto-updates
   static const String versionJsonUrl =

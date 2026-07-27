@@ -283,7 +283,7 @@ class _SettingsViewState extends State<SettingsView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "For queries, support, or feedback, feel free to reach out directly via WhatsApp, Instagram, or Email:",
+                                  "For queries, support, or feedback, feel free to reach out directly via Instagram:",
                                   style: TextStyle(
                                     fontSize: 13.5,
                                     color: AppColors.textSecondary,
@@ -292,35 +292,7 @@ class _SettingsViewState extends State<SettingsView> {
                                 ),
                                 const SizedBox(height: 12),
                                 InkWell(
-                                  onTap: () => _launchContactUrl("https://wa.me/91varun_vs24"),
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 6.0),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(7),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF25D366).withValues(alpha: 0.15),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(Icons.chat_bubble_rounded, color: Color(0xFF25D366), size: 16),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text("WhatsApp Support", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
-                                            Text("@varun_vs24", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primaryLight)),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                InkWell(
-                                  onTap: () => _launchContactUrl("https://instagram.com/varun_vs205"),
+                                  onTap: () => _launchContactUrl("https://instagram.com/s.gram2026"),
                                   borderRadius: BorderRadius.circular(10),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -339,7 +311,7 @@ class _SettingsViewState extends State<SettingsView> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text("Instagram Direct", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
-                                            Text("@varun_vs205", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primaryLight)),
+                                            Text("@s.gram2026", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primaryLight)),
                                           ],
                                         ),
                                       ],
