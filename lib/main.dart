@@ -798,15 +798,16 @@ class _AppShellState extends State<AppShell> {
     isDarkMode: _isDarkMode,
     selectedLanguage: _selectedLanguage,
     isAKAssistantEnabled: _isAKAssistantEnabled,
-    onThemeChanged: (isDark) async {
+    onThemeChanged: (isDark) {
+      AppColors.isDark = isDark;
+      themeNotifier.value = isDark;
       setState(() {
         _isDarkMode = isDark;
-        AppColors.isDark = isDark;
       });
-      themeNotifier.value = isDark;
-      final prefs = _prefs ?? await SharedPreferences.getInstance();
-      _prefs = prefs;
-      await prefs.setBool('is_dark_mode', isDark);
+      SharedPreferences.getInstance().then((prefs) {
+        _prefs = prefs;
+        prefs.setBool('is_dark_mode', isDark);
+      });
     },
     onLanguageChanged: (lang) async {
       setState(() {

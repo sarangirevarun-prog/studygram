@@ -17,7 +17,8 @@ class AKFloatingButton extends StatefulWidget {
   State<AKFloatingButton> createState() => _AKFloatingButtonState();
 }
 
-class _AKFloatingButtonState extends State<AKFloatingButton> with SingleTickerProviderStateMixin {
+class _AKFloatingButtonState extends State<AKFloatingButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
 
   @override
@@ -79,7 +80,11 @@ class _AKFloatingButtonState extends State<AKFloatingButton> with SingleTickerPr
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
+                      const Icon(
+                        Icons.auto_awesome,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                       const SizedBox(width: 2),
                       const Text(
                         "AK",

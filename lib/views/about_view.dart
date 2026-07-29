@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_gram/services/update_service.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/widgets/swipe_back.dart';
 import 'package:study_gram/widgets/user_avatar.dart';
@@ -117,6 +118,23 @@ class AboutView extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textMuted,
                                 letterSpacing: 1.0,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryPale,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: AppColors.primaryLight.withValues(alpha: 0.25)),
+                              ),
+                              child: Text(
+                                "v${UpdateService.currentAppVersionName} • Official Release",
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryLight,
+                                ),
                               ),
                             ),
                           ],
