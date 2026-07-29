@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:study_gram/services/update_service.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
-import 'package:study_gram/widgets/app_qr_card.dart';
 import 'package:study_gram/widgets/pull_refresh.dart';
 import 'package:study_gram/widgets/swipe_back.dart';
 
@@ -269,8 +268,6 @@ class _UpdatesViewState extends State<UpdatesView> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 24),
-                          const AppQrCard(),
                           const SizedBox(height: 40),
                         ],
                       ),
