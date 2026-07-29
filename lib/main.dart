@@ -457,7 +457,8 @@ class _AppShellState extends State<AppShell> {
           _push(_buildHome(), '/home', clearStack: true);
           Future.delayed(const Duration(milliseconds: 600), () {
             final navContext = _navKey.currentContext;
-            if (navContext != null) {
+            if (navContext != null && navContext.mounted) {
+              // ignore: use_build_context_synchronously
               UpdateService.checkForUpdates(navContext, silent: true);
             }
           });
@@ -485,7 +486,8 @@ class _AppShellState extends State<AppShell> {
           _push(_buildHome(), '/home', clearStack: true);
           Future.delayed(const Duration(milliseconds: 600), () {
             final navContext = _navKey.currentContext;
-            if (navContext != null) {
+            if (navContext != null && navContext.mounted) {
+              // ignore: use_build_context_synchronously
               UpdateService.checkForUpdates(navContext, silent: true);
             }
           });
