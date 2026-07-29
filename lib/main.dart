@@ -26,6 +26,8 @@ import 'package:study_gram/views/saved_view.dart';
 import 'package:study_gram/views/feedback_view.dart';
 import 'package:study_gram/views/more_apps_view.dart';
 import 'package:study_gram/models/branch_db.dart';
+import 'package:study_gram/widgets/ak_floating_button.dart';
+import 'package:study_gram/services/ak_assistant_service.dart';
 
 final ValueNotifier<bool> themeNotifier = ValueNotifier(false);
 
@@ -34,6 +36,12 @@ void main() async {
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Enable offline persistence & caching for smooth offline usability
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
   );
 
   runApp(const MyApp());
@@ -160,6 +168,7 @@ class _AppShellState extends State<AppShell> {
   bool _isLoggedIn = false;
   bool _showSplash = true;
   bool _isDarkMode = false;
+  bool _isAKAssistantEnabled = true;
   String _selectedLanguage = "English";
   SharedPreferences? _prefs;
 
@@ -202,10 +211,12 @@ class _AppShellState extends State<AppShell> {
     final savedName = prefs.getString('user_name');
     final savedPhone = prefs.getString('phone_number');
     final savedTheme = prefs.getBool('is_dark_mode') ?? false;
+    final savedAkEnabled = prefs.getBool('is_ak_assistant_enabled') ?? true;
     final savedLang = prefs.getString('app_language') ?? 'English';
     setState(() {
       _isLoggedIn = isLoggedIn;
       _isDarkMode = savedTheme;
+      _isAKAssistantEnabled = savedAkEnabled;
       _selectedLanguage = savedLang;
       AppColors.isDark = savedTheme;
       themeNotifier.value = savedTheme;
@@ -772,6 +783,7 @@ class _AppShellState extends State<AppShell> {
   Widget _buildSettings() => SettingsView(
     isDarkMode: _isDarkMode,
     selectedLanguage: _selectedLanguage,
+    isAKAssistantEnabled: _isAKAssistantEnabled,
     onThemeChanged: (isDark) async {
       setState(() {
         _isDarkMode = isDark;
@@ -790,6 +802,14 @@ class _AppShellState extends State<AppShell> {
       final prefs = _prefs ?? await SharedPreferences.getInstance();
       _prefs = prefs;
       await prefs.setString('app_language', lang);
+    },
+    onAKAssistantChanged: (enabled) async {
+      setState(() {
+        _isAKAssistantEnabled = enabled;
+      });
+      final prefs = _prefs ?? await SharedPreferences.getInstance();
+      _prefs = prefs;
+      await prefs.setBool('is_ak_assistant_enabled', enabled);
     },
     onBack: _safePop,
   );
@@ -869,62 +889,181 @@ class _AppShellState extends State<AppShell> {
         onBack: _safePop,
       );
 
+  void _executeAKAction(AKAction action) {
+    switch (action.type) {
+      case AKActionType.navigateHome:
+        _onNavTap(0);
+        break;
+      case AKActionType.navigateUpdates:
+        _onNavTap(1);
+        break;
+      case AKActionType.navigateSaved:
+        _onNavTap(2);
+        break;
+      case AKActionType.navigateProfile:
+        _onNavTap(3);
+        break;
+      case AKActionType.navigateSettings:
+        _push(_buildSettings(), '/settings');
+        break;
+      case AKActionType.navigateAbout:
+        _push(_buildAboutUs(), '/about');
+        break;
+      case AKActionType.navigateFeedback:
+        _push(_buildSuggestion(), '/suggestion');
+        break;
+      case AKActionType.navigateScheme:
+        _push(_buildSchemeSelection(), '/scheme_select');
+        break;
+      case AKActionType.navigateBranch:
+        _push(_buildChooseBranch(), '/choose_branch');
+        break;
+      case AKActionType.navigateSubjects:
+        _push(_buildSubjects(), '/subjects');
+        break;
+      case AKActionType.navigateMaterials:
+        _push(_buildMaterials(), '/materials');
+        break;
+      case AKActionType.toggleTheme:
+        final newDark = !_isDarkMode;
+        setState(() {
+          _isDarkMode = newDark;
+          AppColors.isDark = newDark;
+        });
+        themeNotifier.value = newDark;
+        if (_prefs != null) {
+          _prefs!.setBool('is_dark_mode', newDark);
+        }
+        break;
+      case AKActionType.setCourse:
+        if (action.parameter != null) {
+          setState(() {
+            _selectedCourse = action.parameter!;
+          });
+          _push(_buildChooseBranch(), '/choose_branch');
+        }
+        break;
+      case AKActionType.setBranch:
+        if (action.parameter != null) {
+          setState(() {
+            _selectedBranch = action.parameter!;
+          });
+          _push(_buildSchemeSelection(), '/scheme_select');
+        }
+        break;
+      case AKActionType.setScheme:
+        if (action.parameter != null) {
+          setState(() {
+            _selectedScheme = action.parameter!;
+          });
+          _push(_buildYearSemSelection(), '/year_sem_select');
+        }
+        break;
+      case AKActionType.searchSubject:
+        final currentBranchSubjects = branchSubjectsDb[_selectedBranch] ?? [];
+        if (action.parameter != null && action.parameter!.trim().isNotEmpty) {
+          final queryStr = action.parameter!.trim().toLowerCase();
+
+          // Search if query matches any subject in CURRENT selected branch first!
+          String? matchedSubject;
+          for (final sub in currentBranchSubjects) {
+            if (sub.toLowerCase().contains(queryStr)) {
+              matchedSubject = sub;
+              break;
+            }
+          }
+
+          if (matchedSubject != null) {
+            _openSubject(matchedSubject, _selectedBranch);
+          } else {
+            // Fallback for cross-branch search
+            final foundBranch = _findBranchForLegacySubject(action.parameter!);
+            _openSubject(action.parameter!, foundBranch);
+          }
+        } else {
+          // Empty parameter: open active selected branch's first subject
+          final defaultSub = currentBranchSubjects.isNotEmpty ? currentBranchSubjects.first : "Java Programming";
+          _openSubject(defaultSub, _selectedBranch);
+        }
+        break;
+      case AKActionType.none:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final appContextData = {
+      'userName': _userNameNotifier.value,
+      'course': _selectedCourse,
+      'branch': _selectedBranch,
+      'scheme': _selectedScheme,
+      'isDarkMode': _isDarkMode,
+    };
+
     return ValueListenableBuilder<String>(
       valueListenable: AppStrings.languageNotifier,
       builder: (context, currentLang, child) {
         return ResponsiveDeviceFrame(
-      showBottomNav: _showSplash ? false : _showBottomNav,
-      navIndex: _navIndex,
-      onNavTap: _onNavTap,
-      // ── Animated cross-fade from splash to main navigation shell ──
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 600),
-        switchInCurve: Curves.easeInOut,
-        switchOutCurve: Curves.easeInOut,
-        child: _showSplash
-            ? const SplashView(key: ValueKey('splash_screen'))
-            : PopScope(
-                key: const ValueKey('main_navigator'),
-                canPop: false,
-                onPopInvokedWithResult: (didPop, result) {
-                  if (didPop) return;
-                  final navigator = _navKey.currentState;
-                  if (navigator != null && navigator.canPop()) {
-                    navigator.pop();
-                  } else {
-                    SystemNavigator.pop();
-                  }
-                },
-                child: Navigator(
-                  key: _navKey,
-                  observers: [
-                    AppShellRouteObserver(
-                      onRouteChanged: (name) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (!mounted) return;
-                          if (name == '/home') {
-                            setState(() => _navIndex = 0);
-                          } else if (name == '/updates') {
-                            setState(() => _navIndex = 1);
-                          } else if (name == '/saved') {
-                            setState(() => _navIndex = 2);
-                          } else if (name == '/profile') {
-                            setState(() => _navIndex = 3);
-                          }
-                        });
-                      },
+          showBottomNav: _showSplash ? false : _showBottomNav,
+          navIndex: _navIndex,
+          onNavTap: _onNavTap,
+          // ── Animated cross-fade from splash to main navigation shell ──
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            switchInCurve: Curves.easeInOut,
+            switchOutCurve: Curves.easeInOut,
+            child: _showSplash
+                ? const SplashView(key: ValueKey('splash_screen'))
+                : PopScope(
+                    key: const ValueKey('main_navigator'),
+                    canPop: false,
+                    onPopInvokedWithResult: (didPop, result) {
+                      if (didPop) return;
+                      final navigator = _navKey.currentState;
+                      if (navigator != null && navigator.canPop()) {
+                        navigator.pop();
+                      } else {
+                        SystemNavigator.pop();
+                      }
+                    },
+                    child: Stack(
+                      children: [
+                        Navigator(
+                          key: _navKey,
+                          observers: [
+                            AppShellRouteObserver(
+                              onRouteChanged: (name) {
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  if (!mounted) return;
+                                  if (name == '/home') {
+                                    setState(() => _navIndex = 0);
+                                  } else if (name == '/updates') {
+                                    setState(() => _navIndex = 1);
+                                  } else if (name == '/saved') {
+                                    setState(() => _navIndex = 2);
+                                  } else if (name == '/profile') {
+                                    setState(() => _navIndex = 3);
+                                  }
+                                });
+                              },
+                            ),
+                          ],
+                          onGenerateRoute: (_) => _slideRoute(
+                            _isLoggedIn ? _buildHome() : _buildLogin(),
+                            _isLoggedIn ? '/home' : '/login',
+                          ),
+                        ),
+                        if (_isLoggedIn && _isAKAssistantEnabled)
+                          AKFloatingButton(
+                            appContext: appContextData,
+                            onExecuteAction: _executeAKAction,
+                          ),
+                      ],
                     ),
-                  ],
-                  onGenerateRoute: (_) => _slideRoute(
-                    _isLoggedIn ? _buildHome() : _buildLogin(),
-                    _isLoggedIn ? '/home' : '/login',
                   ),
-                ),
-              ),
-      ),
-    );
+          ),
+        );
       },
     );
   }
