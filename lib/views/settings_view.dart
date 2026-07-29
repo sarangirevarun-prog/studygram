@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
+import 'package:study_gram/widgets/app_qr_card.dart';
 import 'package:study_gram/widgets/swipe_back.dart';
 import 'package:study_gram/widgets/pull_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -376,43 +377,70 @@ class _SettingsViewState extends State<SettingsView> {
                     ),
                     const SizedBox(height: 28),
 
-                    // App Info
-                    _buildSectionHeader("App Info"),
+                    // App Info & Share
+                    _buildSectionHeader("App Info & Share"),
                     const SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: AppColors.bgCard,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: AppColors.borderCard),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Studygram App",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
-                                ),
+                          ListTile(
+                            onTap: () => AppQrCard.showQrModal(context),
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryPale,
+                                shape: BoxShape.circle,
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                "Latest Release",
-                                style: TextStyle(fontSize: 12, color: AppColors.textMuted),
-                              ),
-                            ],
+                              child: Icon(Icons.qr_code_scanner_rounded, color: AppColors.primaryLight, size: 20),
+                            ),
+                            title: Text(
+                              "Share App QR Scanner",
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                            ),
+                            subtitle: Text(
+                              "Scan to download AI update",
+                              style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                            ),
+                            trailing: Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
                           ),
-                          Text(
-                            "v1.0.0",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
+                          _buildDivider(),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Studygram App",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      "Latest Release",
+                                      style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "v1.0.2",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

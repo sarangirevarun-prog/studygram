@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:study_gram/services/update_service.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
+import 'package:study_gram/widgets/app_qr_card.dart';
 import 'package:study_gram/widgets/pull_refresh.dart';
 import 'package:study_gram/widgets/swipe_back.dart';
 
@@ -61,7 +62,7 @@ class _UpdatesViewState extends State<UpdatesView> {
     final bool isUpdateAvailable = remoteCode > UpdateService.currentAppVersionCode;
     final String remoteName = _remoteData?['latest_version']?.toString() ?? UpdateService.currentAppVersionName;
     final String releaseNotes = _remoteData?['release_notes']?.toString() ?? 
-        "• Added Basic Physics & Basic Chemistry modules\n• Improved Profile & Updates pull-to-refresh\n• Enhanced cloud image loading";
+        "• New AI Assistant update with enhanced voice chat\n• Added Share App via QR Scanner for instant downloads\n• Updated contact & support via Instagram (@s.gram2026)\n• Performance optimizations and smooth UI enhancements";
     final String apkUrl = _remoteData?['apk_url']?.toString() ?? "";
 
     return SwipeBackWrapper(
@@ -268,6 +269,8 @@ class _UpdatesViewState extends State<UpdatesView> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 24),
+                          const AppQrCard(),
                           const SizedBox(height: 40),
                         ],
                       ),
