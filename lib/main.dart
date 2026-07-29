@@ -455,6 +455,12 @@ class _AppShellState extends State<AppShell> {
           });
           await _loadUserBookmarks();
           _push(_buildHome(), '/home', clearStack: true);
+          Future.delayed(const Duration(milliseconds: 600), () {
+            final navContext = _navKey.currentContext;
+            if (navContext != null) {
+              UpdateService.checkForUpdates(navContext, silent: true);
+            }
+          });
         },
         onCreateAccountTap: () {
           _push(_buildRegister(), '/register');
@@ -477,6 +483,12 @@ class _AppShellState extends State<AppShell> {
           });
           await _loadUserBookmarks();
           _push(_buildHome(), '/home', clearStack: true);
+          Future.delayed(const Duration(milliseconds: 600), () {
+            final navContext = _navKey.currentContext;
+            if (navContext != null) {
+              UpdateService.checkForUpdates(navContext, silent: true);
+            }
+          });
         },
         onBackToLoginTap: _safePop,
       );
