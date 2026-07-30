@@ -256,7 +256,7 @@ class AboutView extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              "Studygram Education v1.0.0",
+                              "Studygram Education v${UpdateService.currentAppVersionName}",
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,

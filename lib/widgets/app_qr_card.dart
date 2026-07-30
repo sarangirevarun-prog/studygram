@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_gram/services/update_service.dart';
 import 'package:study_gram/theme/colors.dart';
 
 class AppQrCard extends StatelessWidget {
@@ -54,7 +55,7 @@ class AppQrCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Scan to Download AI Update",
+                              "Scan to Download v${UpdateService.currentAppVersionName} Update",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -192,7 +193,7 @@ class AppQrCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "Let friends scan to install new AI release",
+                      "Let friends scan to install v${UpdateService.currentAppVersionName} update",
                       style: TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,

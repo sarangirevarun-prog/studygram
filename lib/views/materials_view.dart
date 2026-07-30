@@ -33,8 +33,6 @@ class MaterialsView extends StatefulWidget {
 
 class _MaterialsViewState extends State<MaterialsView> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final Map<String, double> _downloadProgress = {};
-  final Map<String, bool> _isDownloaded = {};
 
   static const String _githubJsonUrl = 
       "https://raw.githubusercontent.com/sarangirevarun-prog/StudyGram-database/main/materials.json";
@@ -126,43 +124,6 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
     }
   }
 
-  void _simulateDownload(String noteTitle, String pdfUrl) {
-    if (_isDownloaded[noteTitle] == true || _downloadProgress[noteTitle] != null) {
-      if (pdfUrl.isNotEmpty) _launchUrl(pdfUrl);
-      return;
-    }
-
-    setState(() {
-      _downloadProgress[noteTitle] = 0.0;
-    });
-
-    Timer.periodic(const Duration(milliseconds: 150), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      setState(() {
-        double current = _downloadProgress[noteTitle] ?? 0.0;
-        if (current >= 1.0) {
-          timer.cancel();
-          _downloadProgress.remove(noteTitle);
-          _isDownloaded[noteTitle] = true;
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Successfully downloaded $noteTitle!"),
-              backgroundColor: AppColors.primary,
-              duration: const Duration(seconds: 1),
-            ),
-          );
-
-          if (pdfUrl.isNotEmpty) _launchUrl(pdfUrl);
-        } else {
-          _downloadProgress[noteTitle] = current + 0.1;
-        }
-      });
-    });
-  }
 
   void _playVideo(String title, String videoUrl) {
     showDialog(
@@ -604,73 +565,55 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
           final title = item['title'] ?? 'Unit Note';
           final pdfUrl = item['url'] ?? '';
           final size = item['size'] ?? 'PDF File';
-          final progress = _downloadProgress[title];
-          final downloaded = _isDownloaded[title] == true;
 
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.borderCard),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryPale,
-                    shape: BoxShape.circle,
+          return GestureDetector(
+            onTap: () => _launchUrl(pdfUrl),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.bgCard,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.borderCard),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryPale,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.picture_as_pdf_outlined, color: AppColors.primaryLight, size: 20),
                   ),
-                  child: Icon(Icons.picture_as_pdf_outlined, color: AppColors.primaryLight, size: 20),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary),
-                      ),
-                      const SizedBox(height: 4),
-                      if (progress != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            backgroundColor: AppColors.bgMain,
-                            valueColor: AlwaysStoppedAnimation(AppColors.primaryLight),
-                          ),
-                        )
-                      else
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          downloaded ? "PDF Downloaded" : size,
+                          title,
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          size,
                           style: TextStyle(color: AppColors.textMuted, fontSize: 13),
                         ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                if (progress != null)
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation(AppColors.primaryLight),
+                      ],
                     ),
-                  )
-                else
+                  ),
+                  const SizedBox(width: 8),
                   IconButton(
-                    onPressed: () => _simulateDownload(title, pdfUrl),
+                    onPressed: () => _launchUrl(pdfUrl),
                     icon: Icon(
-                      downloaded ? Icons.check_circle_rounded : Icons.download_for_offline_outlined,
-                      color: downloaded ? AppColors.primaryLight : AppColors.textSecondary,
+                      Icons.arrow_forward_ios_rounded,
+                      color: AppColors.textMuted,
+                      size: 16,
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
           );
         },

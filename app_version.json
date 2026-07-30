@@ -1,7 +1,7 @@
 {
-  "latest_version": "1.0.3",
-  "version_code": 4,
-  "release_notes": "• New AI Assistant update with enhanced voice chat\n• Added Share App via QR Scanner for instant downloads\n• Updated contact & support via Instagram (@s.gram2026)\n• Performance optimizations and smooth UI enhancements",
+  "latest_version": "1.0.4",
+  "version_code": 5,
+  "release_notes": "• Replaced download option in All Notes section with clean forward arrow navigation\n• Dynamic versioning across Settings, Profile, About & QR Scanner screens\n• Seamless auto-update detection on app launch\n• Performance optimizations and UI enhancements",
   "apk_url": "https://github.com/sarangirevarun-prog/studygram/raw/main/app-release.apk",
   "force_update": true
 }

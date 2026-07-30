@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_gram/services/update_service.dart';
 import 'package:study_gram/theme/colors.dart';
 import 'package:study_gram/theme/l10n.dart';
 import 'package:study_gram/widgets/app_qr_card.dart';
@@ -433,7 +434,7 @@ class _SettingsViewState extends State<SettingsView> {
                                   ],
                                 ),
                                 Text(
-                                  "v1.0.2",
+                                  "v${UpdateService.currentAppVersionName}",
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
