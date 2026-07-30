@@ -10,20 +10,16 @@ import 'package:url_launcher/url_launcher.dart';
 class SettingsView extends StatefulWidget {
   final bool isDarkMode;
   final String selectedLanguage;
-  final bool isAKAssistantEnabled;
   final Function(bool) onThemeChanged;
   final Function(String) onLanguageChanged;
-  final Function(bool) onAKAssistantChanged;
   final VoidCallback onBack;
 
   const SettingsView({
     super.key,
     required this.isDarkMode,
     required this.selectedLanguage,
-    required this.isAKAssistantEnabled,
     required this.onThemeChanged,
     required this.onLanguageChanged,
-    required this.onAKAssistantChanged,
     required this.onBack,
   });
 
@@ -33,7 +29,6 @@ class SettingsView extends StatefulWidget {
 
 class _SettingsViewState extends State<SettingsView> {
   late bool _darkModeValue;
-  late bool _akAssistantValue;
 
   Future<void> _launchContactUrl(String urlStr) async {
     final uri = Uri.parse(urlStr);
@@ -128,7 +123,6 @@ class _SettingsViewState extends State<SettingsView> {
   void initState() {
     super.initState();
     _darkModeValue = widget.isDarkMode;
-    _akAssistantValue = widget.isAKAssistantEnabled;
   }
 
   @override
@@ -136,9 +130,6 @@ class _SettingsViewState extends State<SettingsView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.isDarkMode != widget.isDarkMode) {
       _darkModeValue = widget.isDarkMode;
-    }
-    if (oldWidget.isAKAssistantEnabled != widget.isAKAssistantEnabled) {
-      _akAssistantValue = widget.isAKAssistantEnabled;
     }
   }
 
@@ -261,47 +252,6 @@ class _SettingsViewState extends State<SettingsView> {
                       ),
                     ),
 
-                    // AK AI Assistant Section
-                    _buildSectionHeader("AK AI Assistant"),
-                    const SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.bgCard,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.borderCard),
-                      ),
-                      child: SwitchListTile.adaptive(
-                        secondary: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [AppColors.primary, AppColors.primaryLight],
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 18),
-                        ),
-                        title: Text(
-                          "Enable AK AI Assistant",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          _akAssistantValue ? "AK AI logo button active on home screen" : "AK AI button hidden from screen",
-                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-                        ),
-                        activeTrackColor: AppColors.primaryLight,
-                        value: _akAssistantValue,
-                        onChanged: (val) {
-                          setState(() => _akAssistantValue = val);
-                          widget.onAKAssistantChanged(val);
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 28),
 
                     // Help & Support Section
                     _buildSectionHeader("Help & Support"),
@@ -404,7 +354,7 @@ class _SettingsViewState extends State<SettingsView> {
                               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                             ),
                             subtitle: Text(
-                              "Scan to download AI update",
+                              "Scan to download latest update",
                               style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                             ),
                             trailing: Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),

@@ -27,10 +27,22 @@ class UpdateService {
     return null;
   }
 
-  /// Launch external browser to download APK
+  /// Convert GitHub web URLs to direct raw download URLs
+  static String getDirectApkUrl(String urlString) {
+    if (urlString.contains('github.com') && (urlString.contains('/raw/') || urlString.contains('/blob/'))) {
+      return urlString
+          .replaceAll('github.com', 'raw.githubusercontent.com')
+          .replaceAll('/raw/', '/')
+          .replaceAll('/blob/', '/');
+    }
+    return urlString;
+  }
+
+  /// Launch external browser to download APK directly
   static Future<void> launchApkDownload(String urlString) async {
     if (urlString.isEmpty) return;
-    final uri = Uri.tryParse(urlString);
+    final directUrl = getDirectApkUrl(urlString);
+    final uri = Uri.tryParse(directUrl);
     if (uri == null) return;
     try {
       final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);

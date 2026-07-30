@@ -61,7 +61,7 @@ class _UpdatesViewState extends State<UpdatesView> {
     final bool isUpdateAvailable = remoteCode > UpdateService.currentAppVersionCode;
     final String remoteName = _remoteData?['latest_version']?.toString() ?? UpdateService.currentAppVersionName;
     final String releaseNotes = _remoteData?['release_notes']?.toString() ?? 
-        "• New AI Assistant update with enhanced voice chat\n• Added Share App via QR Scanner for instant downloads\n• Updated contact & support via Instagram (@s.gram2026)\n• Performance optimizations and smooth UI enhancements";
+        "• Added Share App via QR Scanner for instant downloads\n• Updated contact & support via Instagram (@s.gram2026)\n• Performance optimizations and smooth UI enhancements";
     final String apkUrl = _remoteData?['apk_url']?.toString() ?? "";
 
     return SwipeBackWrapper(
