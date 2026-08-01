@@ -36,14 +36,19 @@ class BranchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final branches = branchSubjectsDb.keys.toList();
+    final branchSubjectsMap = getBranchSubjectsDbForCourse(selectedCourse);
+    final branchInfoMap = getBranchInfoDbForCourse(selectedCourse);
+    final branches = branchSubjectsMap.keys.toList();
 
     final List<IconData> icons = [
       Icons.laptop_chromebook_rounded,
+      Icons.psychology_rounded,
       Icons.build_circle_outlined,
       Icons.settings_outlined,
       Icons.bolt_rounded,
       Icons.cell_tower_rounded,
+      Icons.security_rounded,
+      Icons.biotech_rounded,
     ];
 
     final List<Color> colors = [
@@ -52,6 +57,9 @@ class BranchView extends StatelessWidget {
       AppColors.tealAccent,
       AppColors.blueInfo,
       Colors.deepPurpleAccent,
+      Colors.orangeAccent,
+      Colors.indigoAccent,
+      Colors.pinkAccent,
     ];
 
     return SwipeBackWrapper(
@@ -79,15 +87,16 @@ class BranchView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "$selectedCourse Branches",
+                            "$selectedCourse Courses",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
+                              fontFamily: 'Outfit',
                             ),
                           ),
                           Text(
-                            "Tap a branch to explore subjects",
+                            "Tap a course branch to explore subjects",
                             style: TextStyle(
                               fontSize: 13,
                               color: AppColors.textMuted,
@@ -107,11 +116,11 @@ class BranchView extends StatelessWidget {
                   itemCount: branches.length,
                   itemBuilder: (context, index) {
                     final branchKey = branches[index];
-                    final info = diplomaBranchInfoDb[branchKey];
+                    final info = branchInfoMap[branchKey];
                     final color = colors[index % colors.length];
                     final icon  = icons[index % icons.length];
                     final subjectCount =
-                        branchSubjectsDb[branchKey]?.length ?? 0;
+                        branchSubjectsMap[branchKey]?.length ?? 0;
 
                     return _BranchCard(
                       branchKey: branchKey,
@@ -205,6 +214,7 @@ class _BranchCard extends StatelessWidget {
             ],
           ),
         ),
+        
       ),
     );
   }

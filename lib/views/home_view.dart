@@ -68,33 +68,41 @@ class _HomeViewState extends State<HomeView> {
 
     if (shouldShowSearchResults) {
       final queryLower = _searchQuery.toLowerCase();
-      branchSemestersDb.forEach((branch, schemes) {
-        schemes.forEach((scheme, years) {
-          years.forEach((year, sems) {
-            sems.forEach((semester, subjects) {
-              for (final subject in subjects) {
-                if (_searchQuery.isEmpty ||
-                    subject.toLowerCase().contains(queryLower)) {
-                  if (!matchingSubjects.any(
-                    (element) =>
-                        element['subject'] == subject &&
-                        element['branch'] == branch,
-                  )) {
-                    matchingSubjects.add({
-                      'subject': subject,
-                      'branch': branch,
-                      'scheme': scheme,
-                      'year': year,
-                      'semester': semester,
-                      'subjects': subjects,
-                    });
+      final allDbs = [
+        branchSemestersDb,
+        btechBranchSemestersDb,
+        mtechBranchSemestersDb,
+      ];
+
+      for (final db in allDbs) {
+        db.forEach((branch, schemes) {
+          schemes.forEach((scheme, years) {
+            years.forEach((year, sems) {
+              sems.forEach((semester, subjects) {
+                for (final subject in subjects) {
+                  if (_searchQuery.isEmpty ||
+                      subject.toLowerCase().contains(queryLower)) {
+                    if (!matchingSubjects.any(
+                      (element) =>
+                          element['subject'] == subject &&
+                          element['branch'] == branch,
+                    )) {
+                      matchingSubjects.add({
+                        'subject': subject,
+                        'branch': branch,
+                        'scheme': scheme,
+                        'year': year,
+                        'semester': semester,
+                        'subjects': subjects,
+                      });
+                    }
                   }
                 }
-              }
+              });
             });
           });
         });
-      });
+      }
     }
 
     return ValueListenableBuilder<String>(
@@ -849,11 +857,27 @@ class _HomeViewState extends State<HomeView> {
             'isAvailable': true,
           },
           {
-            'key': 'Degree',
-            'title': 'Degree (B.E / B.Tech)',
-            'desc': 'Bachelor of Engineering & Technology',
-            'icon': Icons.emoji_events_outlined,
+            'key': 'B.Tech',
+            'title': 'B.Tech (Bachelor of Technology)',
+            'desc': '4-Year Engineering Degree Programs',
+            'icon': Icons.school_rounded,
             'color': AppColors.accent,
+            'isAvailable': true,
+          },
+          {
+            'key': 'M.Tech',
+            'title': 'M.Tech (Master of Technology)',
+            'desc': '2-Year Specialization & Research Programs',
+            'icon': Icons.workspace_premium_rounded,
+            'color': AppColors.blueInfo,
+            'isAvailable': true,
+          },
+          {
+            'key': 'Degree',
+            'title': 'Degree (All Engineering)',
+            'desc': 'Bachelor & Master of Technology (B.Tech / M.Tech)',
+            'icon': Icons.emoji_events_outlined,
+            'color': AppColors.primaryLight,
             'isAvailable': true,
           },
           {

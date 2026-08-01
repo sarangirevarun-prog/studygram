@@ -25,6 +25,7 @@ import 'package:study_gram/views/updates_view.dart';
 import 'package:study_gram/views/saved_view.dart';
 import 'package:study_gram/views/feedback_view.dart';
 import 'package:study_gram/views/more_apps_view.dart';
+import 'package:study_gram/views/degree_type_view.dart';
 import 'package:study_gram/models/branch_db.dart';
 
 final ValueNotifier<bool> themeNotifier = ValueNotifier(false);
@@ -634,32 +635,40 @@ class _AppShellState extends State<AppShell> {
     }
 
     if (scheme == null || year == null || semester == null || subjects == null || subjects.isEmpty) {
-      final branchData = branchSemestersDb[branch];
-      if (branchData != null) {
-        bool found = false;
-        branchData.forEach((sch, years) {
-          if (found) return;
-          years.forEach((y, sems) {
+      final semesterDbs = [
+        getBranchSemestersDbForCourse(_selectedCourse),
+        branchSemestersDb,
+        btechBranchSemestersDb,
+        mtechBranchSemestersDb,
+      ];
+      bool found = false;
+      for (final semDb in semesterDbs) {
+        if (found) break;
+        final branchData = semDb[branch];
+        if (branchData != null) {
+          branchData.forEach((sch, years) {
             if (found) return;
-            sems.forEach((sem, subs) {
+            years.forEach((y, sems) {
               if (found) return;
-              if (subs.contains(subject)) {
-                selectedScheme = sch;
-                selectedYear = y;
-                selectedSemester = sem;
-                selectedSubjects = subs;
-                found = true;
-              }
+              sems.forEach((sem, subs) {
+                if (found) return;
+                if (subs.contains(subject)) {
+                  selectedScheme = sch;
+                  selectedYear = y;
+                  selectedSemester = sem;
+                  selectedSubjects = subs;
+                  found = true;
+                }
+              });
             });
           });
-        });
+        }
       }
     }
 
     setState(() {
       _selectedSubject = subject;
       _selectedBranch = branch;
-      _selectedCourse = "Diploma";
       _selectedScheme = selectedScheme;
       _selectedYear = selectedYear;
       _selectedSemester = selectedSemester;
@@ -668,12 +677,24 @@ class _AppShellState extends State<AppShell> {
     _push(_buildMaterials(), '/materials');
   }
 
+  Widget _buildDegreeTypeSelection() => DegreeTypeView(
+    onBack: _safePop,
+    onDegreeTypeSelected: (degreeType) {
+      setState(() => _selectedCourse = degreeType);
+      _push(_buildChooseBranch(), '/choose_branch');
+    },
+  );
+
   Widget _buildHome() => HomeView(
     userNameNotifier: _userNameNotifier,
     userAvatarNotifier: _userAvatarNotifier,
     onCourseSelected: (course) {
-      setState(() => _selectedCourse = course);
-      _push(_buildChooseBranch(), '/choose_branch');
+      if (course == "Degree") {
+        _push(_buildDegreeTypeSelection(), '/degree_type_select');
+      } else {
+        setState(() => _selectedCourse = course);
+        _push(_buildChooseBranch(), '/choose_branch');
+      }
     },
     onAvatarTap: () {
       setState(() => _navIndex = 3);

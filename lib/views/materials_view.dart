@@ -34,7 +34,9 @@ class MaterialsView extends StatefulWidget {
 class _MaterialsViewState extends State<MaterialsView> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  static const String _githubJsonUrl = 
+  static const String _workerJsonUrl =
+      "https://studygram-database.sarangirevarun.workers.dev/materials.json";
+  static const String _githubJsonUrl =
       "https://raw.githubusercontent.com/sarangirevarun-prog/StudyGram-database/main/materials.json";
 
   late Future<Map<String, dynamic>?> _materialsFuture;
@@ -63,16 +65,29 @@ class _MaterialsViewState extends State<MaterialsView> with SingleTickerProvider
 
   Future<Map<String, dynamic>?> _fetchSubjectData() async {
     try {
-      // Append timestamp to bust HTTP cache when user updates materials.json on GitHub
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final response = await http.get(
-        Uri.parse("$_githubJsonUrl?t=$timestamp"),
+
+      // Primary: Cloudflare Worker proxy (for private repo access)
+      http.Response response = await http.get(
+        Uri.parse("$_workerJsonUrl?t=$timestamp"),
         headers: const {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
           'Expires': '0',
         },
       );
+
+      // Fallback: direct raw GitHub URL
+      if (response.statusCode != 200) {
+        response = await http.get(
+          Uri.parse("$_githubJsonUrl?t=$timestamp"),
+          headers: const {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          },
+        );
+      }
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> allData = jsonDecode(response.body);
